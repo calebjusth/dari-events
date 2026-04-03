@@ -9,13 +9,6 @@ export default defineConfig({
 },
   output: 'server', 
   
-  adapter: vercel({
-    webAnalytics: {
-      enabled: true,
-    },
-  }),
-
-
-  site:'https://darievents.com',
+  adapter: vercel(),
   integrations: [sitemap()],
 });
