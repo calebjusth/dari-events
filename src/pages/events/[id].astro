@@ -2,16 +2,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import type { APIContext } from 'astro';
-// Fetch all event IDs at build time for static generation
-export async function getStaticPaths() {
-  const PAYLOAD_URL = "https://cms.darievents.com";
-  const res = await fetch(`${PAYLOAD_URL}/api/events?depth=1`);
-  if (!res.ok) return [];
-  const data = await res.json();
-  // Adjust according to your API response structure
-  const events = Array.isArray(data?.docs) ? data.docs : (Array.isArray(data?.events) ? data.events : []);
-  return events.map((event: any) => ({ params: { id: String(event.id) } }));
-}
+
 ---
 
 <Layout title="Event Details | Dari Events">

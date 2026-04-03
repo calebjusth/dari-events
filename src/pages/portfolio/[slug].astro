@@ -2,15 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import CaseStudyCard from '../../components/CaseStudyCard.astro';
 
-// Fetch all case study slugs at build time for static generation
-export async function getStaticPaths() {
-  const BACKEND_URL = 'https://cms.darievents.com';
-  const res = await fetch(`${BACKEND_URL}/api/case-studies?depth=1`);
-  if (!res.ok) return [];
-  const data = await res.json();
-  const studies = Array.isArray(data?.docs) ? data.docs : (Array.isArray(data?.caseStudies) ? data.caseStudies : []);
-  return studies.map((study) => ({ params: { slug: String(study.slug) } }));
-}
 ---
 
 <Layout title="Case Study | Dari Events">
