@@ -1,0 +1,91 @@
+---
+// PortfolioCard.astro
+// This component now acts as a "Template" that the client-side script can use.
+// We keep the Props interface for documentation, but we'll handle the 
+// rendering via a JS function in the parent or a global script.
+---
+
+<div id="portfolio-card-template" class="hidden">
+  <a 
+    href="/portfolio/SLUG_PLACEHOLDER" 
+    class="group block relative overflow-hidden rounded-[32px] bg-off-white/5 transition-all duration-700 hover:shadow-2xl CLASSNAME_PLACEHOLDER"
+  >
+    <div class="aspect-[4/5] overflow-hidden relative">
+      <img 
+        src="IMAGE_PLACEHOLDER" 
+        alt="TITLE_PLACEHOLDER" 
+        class="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+      />
+      
+      <div class="absolute inset-0 bg-gradient-to-t from-elegant-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+      
+      <span class="category-tag absolute top-6 right-6 px-4 py-2 rounded-full bg-off-white/10 backdrop-blur-md text-[10px] uppercase tracking-[0.2em] text-off-white font-medium border border-off-white/10">
+        CATEGORY_PLACEHOLDER
+      </span>
+    </div>
+
+    <div class="absolute bottom-0 left-0 w-full p-8 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+      <p class="text-gold text-[10px] uppercase tracking-[0.3em] mb-2 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-100">
+        View Case Study
+      </p>
+      <h3 class="card-title text-2xl md:text-3xl font-main italic text-off-white leading-tight">
+        TITLE_PLACEHOLDER
+      </h3>
+      <div class="flex items-center justify-between mt-4 pt-4 border-t border-off-white/10">
+        <p class="text-off-white/50 text-xs uppercase tracking-widest">
+          Client: <span class="card-client text-off-white font-bold">CLIENT_PLACEHOLDER</span>
+        </p>
+        <span class="text-off-white text-xl transition-transform duration-500 group-hover:translate-x-2">
+          →
+        </span>
+      </div>
+    </div>
+  </a>
+</div>
+
+<script is:inline>
+  /**
+   * Use this function in your parent component's fetch loop 
+   * to generate the HTML for each card.
+   */
+  window.renderPortfolioCard = function(data) {
+    return `
+      <a 
+        href="/portfolio/${data.slug}" 
+        class="group block relative overflow-hidden rounded-[32px] bg-off-white/5 transition-all duration-700 hover:shadow-2xl ${data.className || ''}"
+      >
+        <div class="aspect-[4/5] overflow-hidden relative">
+          <img 
+            src="${data.image}" 
+            alt="${data.title}" 
+            class="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#080e0d]/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+          
+          ${data.category ? `
+            <span class="absolute top-6 right-6 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md text-[10px] uppercase tracking-[0.2em] text-white font-medium border border-white/10">
+              ${data.category}
+            </span>
+          ` : ''}
+        </div>
+
+        <div class="absolute bottom-0 left-0 w-full p-8 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+          <p class="text-[#f5bd02] text-[10px] uppercase tracking-[0.3em] mb-2 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-100">
+            View Case Study
+          </p>
+          <h3 class="text-2xl md:text-3xl font-main italic text-[#F8FAF9] leading-tight">
+            ${data.title}
+          </h3>
+          <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+            <p class="text-white/50 text-xs uppercase tracking-widest">
+              Client: <span class="text-white font-bold">${data.client}</span>
+            </p>
+            <span class="text-white text-xl transition-transform duration-500 group-hover:translate-x-2">
+              →
+            </span>
+          </div>
+        </div>
+      </a>
+    `;
+  }
+</script>

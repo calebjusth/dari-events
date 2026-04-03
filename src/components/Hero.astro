@@ -1,0 +1,96 @@
+---
+// Hero Section - Curtain Reveal Edition
+---
+
+<div class="px-4 py-12 md:px-12 md:py-24">
+  <section id="hero-section" class="relative min-h-[90vh] md:min-h-[100vh] w-full overflow-hidden rounded-[30px] md:rounded-[40px] bg-[#080e0d] shadow-2xl">
+    
+    <div class="absolute inset-0">
+      <img
+        id="hero-bg"
+        src="hero.png"
+        alt="Dari Events hero"
+        class="h-full w-full object-cover object-center opacity-60"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#080e0d]/80"></div>
+    </div>
+
+    <div class="relative z-10 mx-auto max-w-7xl px-8 pt-32 pb-16 md:pt-48">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-start">
+        
+        <div class="text-[#F8FAF9]">
+          <h1 class="hero-reveal-wrapper relative overflow-hidden text-5xl font-bold leading-[0.9] tracking-tighter md:text-8xl lg:text-9xl">
+            <span class="hero-reveal-item inline-block translate-y-full">Strictly Soul</span>
+          </h1>
+        </div>
+
+        <div class="text-[#F8FAF9] lg:mt-12">
+          <div class="hero-reveal-wrapper relative overflow-hidden">
+            <p class="hero-reveal-item translate-y-full mt-2 text-lg md:text-2xl opacity-90 font-medium leading-relaxed max-w-md">
+              Rooted in disruption (politely) and passion, we craft events that leave a lasting emotional impact.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-20 flex justify-start md:justify-center">
+        <div class="hero-reveal-wrapper relative overflow-hidden rounded-xl">
+           <a href="/events" class="hero-reveal-item translate-y-full flex items-center gap-3 bg-[#042425] border border-white/10 px-10 py-5 text-lg font-bold text-[#F8FAF9] shadow-xl transition-all hover:bg-[#f5bd02] hover:text-black active:scale-95">
+            <span>Explore Our Events</span>
+            <span class="text-xl">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute bottom-10 left-10 opacity-30 pointer-events-none hidden md:block">
+      <svg width="300" height="120" viewBox="0 0 400 200" fill="none">
+        <path d="M0 150Q100 100 200 150T400 150" stroke="#f5bd02" stroke-width="1.5" />
+        <path d="M0 170Q100 120 200 170T400 170" stroke="#f5bd02" stroke-width="1" />
+      </svg>
+    </div>
+  </section>
+</div>
+
+<style>
+  /* Ensure reveal items are hidden before JS kicks in */
+  .hero-reveal-item {
+    will-change: transform;
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+
+  const animateHero = () => {
+    const section = document.querySelector('#hero-section');
+    if (!section) return;
+
+    const items = section.querySelectorAll('.hero-reveal-item');
+    const bg = section.querySelector('#hero-bg');
+
+    let ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+      // 1. Zoom out the background image slightly
+      tl.fromTo(bg, 
+        { scale: 1.2, opacity: 0 }, 
+        { scale: 1, opacity: 0.6, duration: 2 }
+      );
+
+      // 2. Cascade the text reveals
+      tl.to(items, {
+        y: "0%",
+        duration: 1.5,
+        stagger: 0.15,
+      }, "-=1.5"); // Start while BG is zooming
+
+    }, section);
+  };
+
+  // Standard Astro page load listener
+  document.addEventListener('astro:page-load', animateHero);
+  
+  // Fallback for non-Astro environments or direct refreshes
+  if (document.readyState === 'complete') animateHero();
+</script>

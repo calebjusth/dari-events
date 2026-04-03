@@ -1,0 +1,121 @@
+---
+// src/components/ParallaxSection.astro
+---
+
+<div class="relative">
+  <div class="sticky top-0 h-screen w-full overflow-hidden z-0">
+    <img 
+      src="/image1.jpg" 
+      alt="Medical center building" 
+      class="h-full w-full object-cover"
+    />
+    <div class="absolute inset-0 bg-black/10"></div>
+  </div>
+
+  <section class="relative z-10 bg-primary-green rounded-t-[60px] md:rounded-t-[100px] shadow-[0_-20px_50px_rgba(0,0,0,0.1)]">
+    <div class="mx-auto max-w-7xl px-8 py-32 text-center">
+      
+      <div class="max-w-4xl mx-auto mb-20">
+        <h2 class="reveal-blur text-5xl md:text-8xl font-bold leading-[1] text-off-white tracking-tight">
+          Dari Events <br />
+          <span class="italic font-serif font-normal text-off-white">by the numbers</span>
+        </h2>
+        <p class="reveal-blur mt-12 text-xl md:text-2xl text-off-white/70 leading-relaxed max-w-2xl mx-auto">
+          Dari Events creates unforgettable experiences that bring people together and create lasting memories.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mt-32">
+        
+        <div class="reveal-blur flex flex-col items-center group">
+          <div class="relative h-48 w-48 mb-8 flex items-center justify-center">
+             <svg class="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2" fill="transparent" class="text-off-white/20" />
+                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3" fill="transparent" 
+                        stroke-dasharray="282.7" stroke-dashoffset="206" 
+                        class="text-off-white transition-all duration-1000 group-hover:stroke-dashoffset-[180]" />
+             </svg>
+             <span class="text-5xl font-bold text-off-white">70+</span>
+          </div>
+          <p class="text-off-white/80 font-medium text-sm leading-snug">
+            <strong>Successful events</strong> delivered worldwide
+          </p>
+        </div>
+
+        <div class="reveal-blur flex flex-col items-center group delay-100">
+          <div class="relative h-48 w-48 mb-8 flex items-center justify-center">
+             <svg class="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2" fill="transparent" class="text-off-white/20" />
+                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3" fill="transparent" 
+                        stroke-dasharray="282.7" stroke-dashoffset="121" 
+                        class="text-off-white transition-all duration-1000" />
+             </svg>
+             <span class="text-5xl font-bold text-off-white">1M+</span>
+          </div>
+          <p class="text-off-white/80 font-medium text-sm leading-snug">
+            <strong>Total digital</strong> Impressions
+          </p>
+        </div>
+
+        <div class="reveal-blur flex flex-col items-center group delay-200">
+          <div class="relative h-48 w-48 mb-8 flex items-center justify-center">
+             <svg class="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2" fill="transparent" class="text-off-white/20" />
+                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3" fill="transparent" 
+                        stroke-dasharray="282.7" stroke-dashoffset="197" 
+                        class="text-off-white transition-all duration-1000" />
+             </svg>
+             <span class="text-5xl font-bold text-off-white">600+</span>
+          </div>
+          <p class="text-off-white/80 font-medium text-sm leading-snug">
+            <strong>Guaranteed Attendees</strong> at our events
+          </p>
+        </div>
+
+        <div class="reveal-blur flex flex-col items-center group delay-300">
+          <div class="relative h-48 w-48 mb-8 flex items-center justify-center">
+             <svg class="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2" fill="transparent" class="text-off-white/20" />
+                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3" fill="transparent" 
+                        stroke-dasharray="282.7" stroke-dashoffset="223" 
+                        class="text-off-white transition-all duration-1000" />
+             </svg>
+             <span class="text-5xl font-bold text-off-white">99%</span>
+          </div>
+          <p class="text-off-white/80 font-medium text-sm leading-snug">
+            <strong>Client satisfaction</strong> rating achieved
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  /* Reuse the blur-reveal logic we established earlier */
+  .reveal-blur {
+    opacity: 0;
+    filter: blur(20px);
+    transform: translateY(40px);
+    transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal-blur.active {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal-blur').forEach(el => observer.observe(el));
+</script>

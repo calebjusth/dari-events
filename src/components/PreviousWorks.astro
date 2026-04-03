@@ -1,0 +1,148 @@
+---
+
+// This component is now 100% static and compatible with 'dist' deployment.
+---
+
+<section id="previous-works" class="relative w-full bg-gradient-to-b from-[#042425] to-[#080e0d] py-10 md:py-20">
+  
+  <div class="px-8 mb-12 md:hidden">
+    <h2 class="text-4xl font-bold tracking-tighter text-[#F8FAF9] font-main">Our Work</h2>
+    <p class="text-[#F8FAF9]/60 mt-2 font-body italic">Cinematic moments, curated.</p>
+  </div>
+
+  <div id="horizontal-scroll-section" class="relative w-full md:h-screen overflow-visible md:overflow-hidden">
+    <div id="horizontal-container" class="flex flex-col md:flex-row w-full md:w-max h-auto md:h-full items-center gap-12 md:gap-16 px-6 md:px-24 opacity-0 transition-opacity duration-700">
+      </div>
+  </div>
+</section>
+
+<style>
+  @media (max-width: 767px) {
+    #horizontal-container { display: flex; flex-direction: column; }
+  }
+  @media (min-width: 768px) {
+    #horizontal-container { flex-direction: row; will-change: transform; }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Update this to your production Payload URL
+  const PAYLOAD_URL = "https://cms.darievents.com"; 
+
+  const fetchAndInit = async () => {
+    const container = document.querySelector('#horizontal-container');
+    if (!container) return;
+
+    try {
+      // 1. Fetch data from your live Payload API
+      const response = await fetch(`${PAYLOAD_URL}/api/featured-works?where[isActive][equals]=true&sort=rank`);
+      const data = await response.json();
+      const featuredWorks = data.docs;
+
+      // 2. Build the HTML string
+      const cardsHtml = featuredWorks.map((work: any) => `
+        <div class="work-card relative group flex-shrink-0 w-full md:w-[85vw] h-[60vh] md:h-[75vh] bg-[#042425] rounded-[3rem] overflow-hidden shadow-2xl border border-white/5">
+          <img 
+            src="${PAYLOAD_URL}${work.mainMedia.url}" 
+            alt="${work.eventName}" 
+            class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-60" 
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#042425] via-transparent to-transparent"></div>
+          <div class="absolute inset-0 p-8 md:p-16 flex flex-col justify-end">
+            <div class="max-w-3xl">
+              ${work.eventLogo ? `
+                <img src="${PAYLOAD_URL}${work.eventLogo.url}" alt="${work.eventName} logo" class="h-12 md:h-20 w-auto object-contain mb-8 opacity-90 group-hover:opacity-100 transition-opacity" />
+              ` : ''}
+              <h3 class="text-4xl md:text-7xl font-main font-bold text-[#F8FAF9] mb-4 tracking-tighter leading-[0.9]">
+                ${work.eventName}
+              </h3>
+              <p class="text-lg md:text-xl text-[#F8FAF9]/70 font-body max-w-xl mb-10 leading-relaxed italic">
+                ${work.shortDescription}
+              </p>
+              <div class="flex flex-wrap items-center gap-6">
+                ${work.relatedCaseStudy ? `
+                  <a href="/case-studies/${work.relatedCaseStudy.id || work.relatedCaseStudy}" class="group/btn inline-flex items-center gap-3 px-8 py-4 bg-[#F8FAF9] text-[#042425] rounded-full font-main font-bold text-xs uppercase tracking-[0.2em] hover:bg-[#f5bd02] transition-all duration-500">
+                    Explore Case Study <span class="group-hover/btn:translate-x-2 transition-transform">→</span>
+                  </a>
+                ` : ''}
+                <span class="text-[10px] uppercase tracking-[0.4em] text-[#F8FAF9]/30 font-bold">
+                  Client: ${work.client || "Private"}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="absolute top-12 right-12 font-main text-white/10 text-8xl font-black">
+            0${work.rank}
+          </div>
+        </div>
+      `).join('');
+
+      // 3. Inject and Fade In
+      container.innerHTML = cardsHtml;
+      container.classList.remove('opacity-0');
+
+      // 4. Initialize GSAP after cards are in the DOM
+      initScroll();
+
+    } catch (error) {
+      console.error("Failed to fetch works:", error);
+    }
+  };
+
+  const initScroll = () => {
+    const wrapper = document.querySelector('#previous-works');
+    const container = document.querySelector('#horizontal-container');
+    const cards = gsap.utils.toArray('.work-card');
+
+    if (!wrapper || !container || cards.length === 0) return;
+
+    let mm = gsap.matchMedia();
+
+    mm.add("(min-width: 768px)", () => {
+      const xDistance = (container as HTMLElement).scrollWidth - window.innerWidth;
+
+      gsap.to(container, {
+        x: -xDistance,
+        ease: "none",
+        scrollTrigger: {
+          trigger: wrapper,
+          start: "top top",
+          end: () => `+=${(container as HTMLElement).scrollWidth}`,
+          scrub: 1,
+          pin: true,
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+        }
+      });
+    });
+
+    mm.add("(max-width: 767px)", () => {
+      cards.forEach((card: any) => {
+        gsap.fromTo(card, 
+          { y: 100, opacity: 0, scale: 0.9 },
+          { 
+            y: 0, 
+            opacity: 1, 
+            scale: 1,
+            duration: 1.2,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 90%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      });
+    });
+  };
+
+  // Run the fetch on page load
+  document.addEventListener('astro:page-load', fetchAndInit);
+  if (document.readyState === 'complete') fetchAndInit();
+</script>

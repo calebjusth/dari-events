@@ -1,0 +1,146 @@
+---
+// FeaturedWork.astro
+// Frontmatter is empty to ensure static builds can fetch live data from Payload.
+---
+
+<div class="px-4 py-2">
+  <section class="relative overflow-hidden rounded-[40px] py-24 px-8 md:px-16 min-h-[700px]">
+    <div class="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      
+      <div class="z-20">
+        <h2 class="text-off-white text-4xl md:text-6xl font-bold leading-tight mb-8">
+          Featured <br />
+          <span class="italic font-main">Work</span>
+        </h2>
+        
+        <div id="event-triggers-container" class="space-y-2 opacity-0 transition-opacity duration-700">
+        </div>
+
+        <a 
+          href="/work" 
+          class="inline-block mt-12 bg-off-white text-elegant-black px-8 py-4 rounded-lg font-bold hover:opacity-90 transition-all active:scale-95"
+        >
+          View Our Portfolio
+        </a>
+      </div>
+
+      <div id="event-images-container" class="relative h-[500px] md:h-[600px] w-full z-10 opacity-0 transition-opacity duration-700">
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<script>
+  const BACKEND_URL = 'https://cms.darievents.com'; // Update for production
+
+  const fetchFeatured = async () => {
+    const triggerContainer = document.getElementById('event-triggers-container');
+    const imageContainer = document.getElementById('event-images-container');
+    
+    if (!triggerContainer || !imageContainer) return;
+
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/api/featured-works?where[isActive][equals]=true&sort=rank&depth=2`
+      );
+      const data = await response.json();
+      const featuredEvents = data.docs || [];
+
+      if (featuredEvents.length === 0) return;
+
+      // 1. Generate Triggers HTML
+      const triggersHtml = featuredEvents.map((event: any) => `
+        <div 
+          class="event-trigger group border-b border-off-white/10 py-6 cursor-pointer transition-all hover:border-off-white"
+          data-target="${event.id}"
+        >
+          <div class="flex items-center justify-between">
+            <h3 class="text-off-white text-2xl font-bold transition-colors">
+              ${event.eventName}
+            </h3>
+            ${event.relatedCaseStudy?.slug ? `
+              <a 
+                href="/portfolio/${event.relatedCaseStudy.slug}"
+                class="relative z-30 text-off-white text-3xl opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0 px-4"
+              >
+                →
+              </a>
+            ` : ''}
+          </div>
+          
+          <div class="max-h-0 opacity-0 overflow-hidden transition-all duration-500 group-hover:max-h-40 group-hover:opacity-100 mt-4">
+            <p class="text-off-white/70 text-lg max-w-md">
+              ${event.shortDescription}
+            </p>
+          </div>
+        </div>
+      `).join('');
+
+      // 2. Generate Image Stacks HTML
+      const imagesHtml = featuredEvents.map((event: any, index: number) => {
+        const imgs = (event.eventGallery || []).map((img: any) => `${BACKEND_URL}${img.url}`);
+        const activeClasses = index === 0 ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0';
+        
+        return `
+          <div 
+            id="img-${event.id}"
+            class="absolute inset-0 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${activeClasses}"
+          >
+            <div class="grid grid-cols-2 gap-3 h-full">
+              <div class="grid grid-rows-2 gap-3">
+                <div class="rounded-[20px] overflow-hidden bg-off-white/5">
+                  ${imgs[0] ? `<img src="${imgs[0]}" alt="" class="h-full w-full object-cover" />` : ''}
+                </div>
+                <div class="rounded-[20px] overflow-hidden bg-off-white/5">
+                  ${imgs[1] ? `<img src="${imgs[1]}" alt="" class="h-full w-full object-cover" />` : ''}
+                </div>
+              </div>
+              <div class="rounded-[20px] overflow-hidden bg-off-white/5">
+                ${imgs[2] ? `<img src="${imgs[2]}" alt="" class="h-full w-full object-cover" />` : ''}
+              </div>
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-tr from-elegant-black/40 to-transparent rounded-[20px] pointer-events-none"></div>
+          </div>
+        `;
+      }).join('');
+
+      // 3. Inject into DOM
+      triggerContainer.innerHTML = triggersHtml;
+      imageContainer.innerHTML = imagesHtml;
+
+      // 4. Reveal UI
+      triggerContainer.classList.remove('opacity-0');
+      imageContainer.classList.remove('opacity-0');
+
+      // 5. Re-attach hover logic
+      initInteractions();
+
+    } catch (error) {
+      console.error("Error fetching Featured Works:", error);
+    }
+  };
+
+  const initInteractions = () => {
+    const triggers = document.querySelectorAll('.event-trigger');
+    const images = document.querySelectorAll('[id^="img-"]');
+
+    triggers.forEach(trigger => {
+      trigger.addEventListener('mouseenter', () => {
+        const targetId = trigger.getAttribute('data-target');
+        images.forEach(img => {
+          if (img.id === `img-${targetId}`) {
+            img.classList.remove('opacity-0', 'scale-95', 'z-0');
+            img.classList.add('opacity-100', 'scale-100', 'z-10');
+          } else {
+            img.classList.remove('opacity-100', 'scale-100', 'z-10');
+            img.classList.add('opacity-0', 'scale-95', 'z-0');
+          }
+        });
+      });
+    });
+  };
+
+  document.addEventListener('astro:page-load', fetchFeatured);
+  if (document.readyState === 'complete') fetchFeatured();
+</script>

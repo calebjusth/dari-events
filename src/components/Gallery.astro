@@ -1,0 +1,125 @@
+---
+// GalleryArchive.astro
+// Frontmatter is now empty to ensure static deployment works with live data.
+---
+
+<section class="gallery-section w-full overflow-hidden">
+  <div class="px-6 py-12 md:px-12 border-b border-white/10">
+    <p class="text-[#f5bd02] text-xs font-bold tracking-[0.2em] uppercase">Archive / Selected Works</p>
+  </div>
+
+  <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full opacity-0 transition-opacity duration-700">
+    </div>
+  
+  <div id="gallery-empty" class="hidden p-12 text-white/30 text-sm">No archive media found.</div>
+</section>
+
+<style>
+  .gallery-section {
+    line-height: 0; 
+  }
+
+  .gallery-item {
+    border: 0.5px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .grain-overlay {
+    background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  }
+
+  @media (max-width: 640px) {
+    .gallery-item {
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Update to your production URL when deploying
+  const BACKEND_URL = 'https://cms.darievents.com';
+
+  const fetchGallery = async () => {
+    const grid = document.getElementById('gallery-grid');
+    const emptyState = document.getElementById('gallery-empty');
+    if (!grid || !emptyState) return;
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/gallery?limit=12&depth=2`);
+      const data = await response.json();
+      
+      // Mapping logic moved to client-side
+      const galleryItems = (data.docs || []).flatMap((gallery: any) => {
+        return (gallery.mediaFiles || []).map((file: any) => ({
+          src: `${BACKEND_URL}${file.url}`,
+          alt: gallery.displayName || file.alt || "Dari Event",
+          category: gallery.eventLink?.title || gallery.legacyEventName || "Event",
+          id: file.id
+        }));
+      }).slice(0, 12);
+
+      if (galleryItems.length === 0) {
+        emptyState.classList.remove('hidden');
+        grid.classList.add('hidden');
+        return;
+      }
+
+      const galleryHtml = galleryItems.map((item: any) => `
+        <div class="gallery-item group relative aspect-square overflow-hidden cursor-crosshair">
+          <div class="grain-overlay pointer-events-none absolute inset-0 z-20 opacity-[0.03] mix-blend-overlay"></div>
+          
+          <img 
+            src="${item.src}" 
+            alt="${item.alt}" 
+            class="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
+            loading="lazy"
+          />
+
+          <div class="absolute inset-0 z-10 bg-black/60 opacity-0 transition-opacity duration-500 group-hover:opacity-100 flex flex-col justify-end p-8">
+            <p class="text-[#f5bd02] text-xs font-bold tracking-widest uppercase mb-2">
+              ${item.category}
+            </p>
+            <h3 class="text-white text-xl md:text-2xl font-bold uppercase tracking-tighter leading-none">
+              ${item.alt}
+            </h3>
+          </div>
+        </div>
+      `).join('');
+
+      grid.innerHTML = galleryHtml;
+      grid.classList.remove('opacity-0');
+      
+      // Trigger GSAP now that elements exist in DOM
+      initAnimations();
+
+    } catch (error) {
+      console.error("Could not fetch gallery from Payload:", error);
+      emptyState.classList.remove('hidden');
+    }
+  };
+
+  const initAnimations = () => {
+    const items = document.querySelectorAll('.gallery-item');
+    if (items.length === 0) return;
+
+    gsap.from(items, {
+      scrollTrigger: {
+        trigger: '.gallery-section',
+        start: 'top 80%',
+      },
+      opacity: 0,
+      y: 40,
+      duration: 1,
+      stagger: 0.1,
+      ease: 'power3.out'
+    });
+  };
+
+  // Run on load/navigation
+  document.addEventListener('astro:page-load', fetchGallery);
+  if (document.readyState === 'complete') fetchGallery();
+</script>

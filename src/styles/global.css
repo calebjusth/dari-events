@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-primary-green: #042425;
+  --color-off-white: #F8FAF9;
+  --color-elegant-black: #080A09;
+  
+  /* Typography Scale */
+  --font-main: 'Montserrat', sans-serif;
+  --font-body: 'Satoshi', sans-serif;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    @apply antialiased scroll-smooth;
+  }
+  
+  body {
+    background-color: var(--color-primary-green);
+    color: var(--color-off-white);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    @apply min-h-screen flex flex-col;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-main);
+    text-transform: none;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+  }
+}
+
+
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px);
+    transition: all 1s ease-out;
+  }
+
+  .reveal.active {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}

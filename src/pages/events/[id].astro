@@ -1,0 +1,297 @@
+
+---
+import Layout from '../../layouts/Layout.astro';
+import type { APIContext } from 'astro';
+// Fetch all event IDs at build time for static generation
+export async function getStaticPaths() {
+  const PAYLOAD_URL = "https://cms.darievents.com";
+  const res = await fetch(`${PAYLOAD_URL}/api/events?depth=1`);
+  if (!res.ok) return [];
+  const data = await res.json();
+  // Adjust according to your API response structure
+  const events = Array.isArray(data?.docs) ? data.docs : (Array.isArray(data?.events) ? data.events : []);
+  return events.map((event: any) => ({ params: { id: String(event.id) } }));
+}
+---
+
+<Layout title="Event Details | Dari Events">
+  <main class="min-h-screen bg-primary-green overflow-hidden selection:bg-[#f5bd02] selection:text-primary-green">
+    
+    <div id="event-loader" class="fixed inset-0 bg-primary-green z-[100] flex items-center justify-center transition-opacity duration-700">
+      <div class="flex flex-col items-center gap-4">
+        <div class="w-12 h-12 border-2 border-[#f5bd02]/30 border-t-[#f5bd02] rounded-full animate-spin"></div>
+        <p class="font-main uppercase tracking-[0.4em] text-[10px] text-off-white/40">Loading Experience</p>
+      </div>
+    </div>
+
+    <div id="event-content" class="opacity-0 transition-opacity duration-1000">
+      <section class="relative h-screen w-full flex items-end pb-24 px-6 md:px-12 lg:px-24">
+        <div class="absolute inset-0 z-0">
+          <img id="event-poster" src="" alt="" class="w-full h-full object-cover opacity-40" />
+          <div class="absolute inset-0 bg-gradient-to-t from-primary-green via-primary-green/70 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-primary-green/80 via-transparent to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 max-w-6xl">
+          <nav class="mb-16">
+            <a href="/" class="group inline-flex items-center gap-2 text-off-white/50 hover:text-off-white transition-colors duration-300">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+              <span class="font-main uppercase tracking-[0.3em] text-[11px] font-medium">Go Back</span>
+            </a>
+          </nav>
+
+          <div class="space-y-6">
+            <span id="event-date-top" class="inline-block text-[#f5bd02] font-bold uppercase tracking-[0.4em] text-xs mb-2"></span>
+            <h1 id="event-title" class="text-7xl md:text-8xl lg:text-9xl font-main font-bold tracking-tighter leading-[0.85] max-w-5xl"></h1>
+
+            <div class="flex flex-wrap items-center gap-6 pt-6">
+              <a id="ticket-link" href="#" target="_blank" class="animated-border-button group relative inline-flex items-center justify-center px-8 py-4 overflow-hidden rounded-full transition-all duration-300">
+                <span class="relative z-10 font-main font-bold uppercase tracking-[0.2em] text-sm text-off-white group-hover:text-primary-green">Get Tickets</span>
+                <span class="absolute inset-0 rounded-full bg-[#f5bd02] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              </a>
+              <button id="open-register" class="font-main uppercase tracking-[0.2em] text-xs py-4 px-8 border border-off-white/30 rounded-full hover:border-off-white hover:bg-off-white/10 transition-all duration-500 backdrop-blur-sm">
+                Register Interest
+              </button>
+              <div class="flex items-center gap-2 text-off-white/60 font-body text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                <span id="event-location-top" class="italic"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-28 px-6 md:px-12 lg:px-24 bg-primary-green">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid lg:grid-cols-2 gap-16 items-start">
+            <div>
+              <span class="inline-block font-main text-[11px] uppercase tracking-[0.5em] text-[#f5bd02] mb-8">The Vision</span>
+              <div id="event-description" class="text-3xl md:text-4xl lg:text-5xl font-light leading-[1.2] text-off-white/90 font-body"></div>
+            </div>
+            <div class="space-y-6">
+              <span class="inline-block font-main text-[11px] uppercase tracking-[0.5em] text-off-white/40">Details</span>
+              <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-off-white/5 border border-off-white/10">
+                  <div class="w-10 h-10 rounded-full bg-[#f5bd02]/20 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[#f5bd02]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                  </div>
+                  <div>
+                    <p class="text-xs uppercase tracking-wider text-off-white/50">Date & Time</p>
+                    <p id="event-date-full" class="font-main font-medium"></p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-off-white/5 border border-off-white/10">
+                  <div class="w-10 h-10 rounded-full bg-[#f5bd02]/20 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[#f5bd02]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                  </div>
+                  <div>
+                    <p class="text-xs uppercase tracking-wider text-off-white/50">Venue</p>
+                    <p id="event-location-bottom" class="font-main font-medium"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="artist-section" class="py-28 px-6 md:px-12 lg:px-24 bg-elegant-black/30 border-y border-off-white/5 hidden">
+        <div class="max-w-7xl mx-auto">
+          <div class="text-center mb-20">
+            <span class="inline-block font-main text-[11px] uppercase tracking-[0.5em] text-[#f5bd02] mb-4">The Architects of Sound</span>
+            <h2 class="text-5xl md:text-6xl font-main font-bold tracking-tighter text-off-white">Featured Artists</h2>
+            <div class="w-20 h-px bg-[#f5bd02]/50 mx-auto mt-6"></div>
+          </div>
+          <div id="artist-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10"></div>
+        </div>
+      </section>
+
+      <div id="modal-overlay" class="fixed inset-0 z-[100] bg-elegant-black/95 backdrop-blur-md flex items-center justify-center opacity-0 pointer-events-none transition-all duration-500">
+        <div class="relative w-full max-w-lg mx-4 p-8 md:p-10 bg-off-white rounded-3xl transform scale-95 transition-transform duration-500 shadow-2xl" id="modal-content">
+          <button id="close-register" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-primary-green/10 text-primary-green hover:bg-primary-green hover:text-off-white transition-all duration-300 flex items-center justify-center text-xl">✕</button>
+          
+          <div id="form-container">
+            <div class="mb-8">
+              <h3 class="text-4xl md:text-5xl font-main font-bold tracking-tighter text-primary-green">Register</h3>
+              <div class="w-12 h-0.5 bg-[#f5bd02] mt-3 mb-4"></div>
+              <p class="font-body text-sm text-primary-green/60">Strictly curated access. Limited spots available.</p>
+            </div>
+
+            <form id="registration-form" class="space-y-6">
+              <input type="hidden" name="event" id="event-id-input" />
+              <div class="space-y-1">
+                <label class="text-xs uppercase tracking-wider text-primary-green/50 font-body">Full Name *</label>
+                <input type="text" name="fullName" placeholder="Enter your full name" required class="form-input" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-xs uppercase tracking-wider text-primary-green/50 font-body">Email Address *</label>
+                <input type="email" name="email" placeholder="you@example.com" required class="form-input" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-xs uppercase tracking-wider text-primary-green/50 font-body">Phone Number *</label>
+                <input type="tel" name="phone" placeholder="+2519 000-0000" required class="form-input" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-xs uppercase tracking-wider text-primary-green/50 font-body">Special Requests (Optional)</label>
+                <textarea name="message" rows="3" placeholder="" class="form-input resize-none"></textarea>
+              </div>
+              <button type="submit" id="submit-btn" class="w-full bg-primary-green text-off-white py-4 rounded-xl font-main font-bold uppercase tracking-[0.2em] text-xs hover:bg-elegant-black transition-all duration-300">
+                Submit Application
+              </button>
+              <p id="form-status" class="text-center text-xs font-bold tracking-widest hidden mt-2"></p>
+            </form>
+          </div>
+
+          <div id="success-state" class="hidden py-12 text-center animate-in fade-in zoom-in duration-500">
+            <div class="mb-6 flex justify-center">
+              <div class="w-20 h-20 rounded-full bg-primary-green text-off-white flex items-center justify-center text-3xl shadow-xl shadow-primary-green/20">✓</div>
+            </div>
+            <h3 class="text-3xl md:text-4xl font-main font-bold text-primary-green mb-3">Submitted Successfully</h3>
+            <p class="font-body text-primary-green/60 text-sm mb-2">Thank you for your interest.</p>
+            <div class="w-16 h-px bg-[#f5bd02] mx-auto my-4"></div>
+            <p class="font-body text-primary-green/50 text-[10px] uppercase tracking-wider">A curator will reach out within 48 hours.</p>
+            <button id="success-close" class="mt-8 text-xs uppercase tracking-[0.2em] font-bold border-b-2 border-[#f5bd02] pb-1 text-primary-green hover:opacity-70 transition-all">CLOSE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  const PAYLOAD_URL = "https://cms.darievents.com"; // Replace with production URL
+
+  const initEventPage = async () => {
+    const pathSegments = window.location.pathname.split('/');
+    const id = pathSegments[pathSegments.length - 1] || pathSegments[pathSegments.length - 2];
+
+    try {
+      const res = await fetch(`${PAYLOAD_URL}/api/events/${id}?depth=2`);
+      if (!res.ok) { window.location.href = '/404'; return; }
+      const event = await res.json();
+
+      // UI Injection
+      document.title = `${event.title} | Dari Events`;
+      (document.getElementById('event-poster') as HTMLImageElement).src = `${PAYLOAD_URL}${event.poster.url}`;
+      document.getElementById('event-title')!.innerText = event.title;
+      document.getElementById('event-id-input')!.setAttribute('value', event.id);
+      
+      const dateObj = new Date(event.date);
+      const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      document.getElementById('event-date-top')!.innerText = formattedDate;
+      document.getElementById('event-date-full')!.innerText = `${dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })} · 8:00 PM`;
+      
+      document.getElementById('event-location-top')!.innerText = event.location;
+      document.getElementById('event-location-bottom')!.innerText = event.location;
+      document.getElementById('event-description')!.innerText = event.description || "A curated cinematic moment...";
+      (document.getElementById('ticket-link') as HTMLAnchorElement).href = event.ticketLink || "#";
+
+      // Artist Logic
+      if (event.featuredArtists?.length > 0) {
+        const artistGrid = document.getElementById('artist-grid')!;
+        document.getElementById('artist-section')!.classList.remove('hidden');
+        artistGrid.innerHTML = event.featuredArtists.map((artist: any) => `
+          <div class="group relative overflow-hidden rounded-3xl bg-off-white/5 border border-off-white/10 backdrop-blur-sm transition-all duration-500 hover:border-[#f5bd02]/30">
+            <div class="aspect-square overflow-hidden bg-elegant-black">
+              <img src="${artist.photo ? PAYLOAD_URL + artist.photo.url : ''}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110" />
+            </div>
+            <div class="p-6 relative z-20">
+              <h3 class="font-main font-bold text-2xl text-off-white group-hover:text-[#f5bd02]">${artist.name}</h3>
+              <p class="text-xs uppercase tracking-widest text-off-white/40 mt-1">${artist.genre || "Electronic"}</p>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Final Transition
+      document.getElementById('event-loader')!.classList.add('opacity-0');
+      setTimeout(() => document.getElementById('event-loader')!.remove(), 700);
+      document.getElementById('event-content')!.classList.remove('opacity-0');
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Modal & Form Logic
+  const setupForm = () => {
+    const openBtn = document.getElementById('open-register');
+    const closeBtn = document.getElementById('close-register');
+    const overlay = document.getElementById('modal-overlay');
+    const form = document.getElementById('registration-form') as HTMLFormElement;
+    const formContainer = document.getElementById('form-container');
+    const successState = document.getElementById('success-state');
+    const successClose = document.getElementById('success-close');
+
+    openBtn?.addEventListener('click', () => overlay?.classList.add('modal-active'));
+    
+    const closeModal = () => {
+      overlay?.classList.remove('modal-active');
+      setTimeout(() => {
+        formContainer?.classList.remove('hidden');
+        successState?.classList.add('hidden');
+        form?.reset();
+      }, 500);
+    };
+
+    closeBtn?.addEventListener('click', closeModal);
+    successClose?.addEventListener('click', closeModal);
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn') as HTMLButtonElement;
+      btn.disabled = true;
+      btn.innerText = "Processing...";
+
+      const formData = new FormData(form);
+      const payloadData = {
+        event: Number(formData.get('event')),
+        fullName: formData.get('fullName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        message: formData.get('message') || "",
+        status: "new"
+      };
+
+      try {
+        const res = await fetch(`${PAYLOAD_URL}/api/registrations`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payloadData),
+        });
+
+        if (res.ok) {
+          formContainer?.classList.add('hidden');
+          successState?.classList.remove('hidden');
+        } else {
+          throw new Error("Submission failed");
+        }
+      } catch (err) {
+        alert("Something went wrong. Please try again.");
+        btn.disabled = false;
+        btn.innerText = "Submit Application";
+      }
+    });
+  };
+
+  document.addEventListener('astro:page-load', () => {
+    initEventPage();
+    setupForm();
+  });
+</script>
+
+<style>
+  .animated-border-button::before {
+    content: ''; position: absolute; inset: 0; border-radius: 9999px; padding: 2px;
+    background: linear-gradient(90deg, #f5bd02, #ff6b6b, #4ecdc4, #f5bd02);
+    background-size: 300% 100%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    animation: border-run 3s linear infinite;
+  }
+  @keyframes border-run { 0% { background-position: 0% 0%; } 100% { background-position: 300% 0%; } }
+  .form-input { width: 100%; background: #f5f7f6; border: 1px solid rgba(4,36,37,0.1); border-radius: 12px; padding: 0.8rem 1rem; color: #042425; }
+  .modal-active { opacity: 1 !important; pointer-events: auto !important; }
+  .modal-active #modal-content { transform: scale(1) !important; }
+</style>

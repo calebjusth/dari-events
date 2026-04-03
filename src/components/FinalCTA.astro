@@ -1,0 +1,72 @@
+---
+// src/components/FinalCTA.astro
+---
+<div class="px-6 py-24 md:px-12">
+<section class="relative min-h-[100vh] w-full overflow-hidden rounded-[40px] bg-[var(--color-off-white)] py-24 md:py-32 px-6">
+  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-[var(--color-primary-green)]/20 rounded-full blur-[120px] pointer-events-none"></div>
+
+  <div class="relative z-10 mx-auto max-w-6xl">
+    <div class="text-center mb-12">
+      <h2 class="reveal-blur text-4xl md:text-6xl font-bold text-[var(--color-elegant-black)] tracking-tight">
+        Contact Dari Events
+      </h2>
+      <p class="reveal-blur mt-4 text-lg md:text-xl text-[var(--color-elegant-black)]/70 max-w-3xl mx-auto">
+        Reach out for questions, bookings, or collaborations. We’re here to build unforgettable experiences with you.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="reveal-blur rounded-2xl bg-white p-8 border border-[var(--color-primary-green)] shadow-sm">
+        <h3 class="text-xl font-bold text-[var(--color-elegant-black)] mb-4">Phone</h3>
+        <p class="text-[var(--color-elegant-black)]/80 mb-2">0935008618</p>
+        <p class="text-[var(--color-elegant-black)]/80">0921605961</p>
+      </div>
+
+      <div class="reveal-blur rounded-2xl bg-white p-8 border border-[var(--color-primary-green)] shadow-sm">
+        <h3 class="text-xl font-bold text-[var(--color-elegant-black)] mb-4">Email</h3>
+        <p class="text-[var(--color-elegant-black)]/80 mb-2">info@darievents.com</p>
+        <p class="text-[var(--color-elegant-black)]/80">partners@darievents.com</p>
+      </div>
+
+      <div class="reveal-blur rounded-2xl bg-white p-8 border border-[var(--color-primary-green)] shadow-sm">
+        <h3 class="text-xl font-bold text-[var(--color-elegant-black)] mb-4">Office</h3>
+        <p class="text-[var(--color-elegant-black)]/80">Addis Ababa, Ethiopia</p>
+        <p class="text-[var(--color-elegant-black)]/80">Bole Atlas</p>
+      </div>
+    </div>
+
+    <div class="reveal-blur mt-10 flex justify-center">
+      <a href="mailto:hello@darievents.com" class="rounded-lg bg-[var(--color-primary-green)] px-10 py-4 text-lg font-bold text-[var(--color-off-white)] hover:brightness-110 transition">
+        Get in Touch
+      </a>
+    </div>
+  </div>
+</section>
+</div>
+<style>
+  /* Ensuring our scroll reveal animation stays consistent */
+  .reveal-blur {
+    opacity: 0;
+    filter: blur(15px);
+    transform: translateY(20px);
+    transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal-blur.active {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.reveal-blur').forEach(el => observer.observe(el));
+</script>

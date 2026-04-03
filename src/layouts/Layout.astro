@@ -1,23 +1,208 @@
+---
+import { ViewTransitions } from "astro:transitions";
+import '../styles/global.css';
+
+interface Props {
+    title: string;
+}
+
+const { title } = Astro.props;
+---
+
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        
+        <title>{title} | Ethiopia's Premier Event Management Company</title>
+        <ViewTransitions />
+    </head>
+    <body class="bg-primary-green font-body antialiased min-h-screen flex flex-col">
+        <div 
+          id="page-curtain" 
+          transition:persist 
+          class="fixed inset-0 z-[100] bg-[#080600] pointer-events-none translate-y-[-100%] transition-transform duration-700 ease-[cubic-bezier(0.85,0,0.15,1)]"
+        ></div>
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+        <header class="absolute fixed inset-x-0 top-0 z-50 flex justify-center p-4">
+            <nav class="flex w-full max-w-7xl items-center justify-between rounded-xl bg-off-white px-6 py-3 shadow-lg border border-gray-100">
+                <div class="flex items-center gap-8">
+                    <a href="/" class="text-xl font-bold tracking-tighter text-elegant-black uppercase flex items-center gap-1">
+                        <img src="/main_logo.svg" alt="Dari Events Logo" class="w-30" />
+                    </a>
+                    
+                    <div class="hidden items-center gap-6 text-[14px] font-semibold text-elegant-black/80 lg:flex">
+                        <a href="/aboutus" class="hover:text-primary-green transition-colors">About Us</a>
+                        <a href="/events" class="hover:text-primary-green transition-colors">Events</a>
+                        <a href="/work" class="hover:text-primary-green transition-colors">Our Works</a>
+                    </div>
+                
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button id="menu-toggle" class="lg:hidden text-elegant-black text-2xl">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <a href="tel:0935008618"class="rounded-lg gap-1.5 bg-primary-green px-6 py-2.5 text-[14px] font-bold text-off-white transition hover:brightness-125">
+                        Call Us <i class="fas fa-phone"></i>
+                    </a>
+                </div>
+            </nav>
+            
+            <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-off-white shadow-lg border border-gray-100 rounded-b-xl mt-2 mx-4">
+                <div class="flex flex-col items-center gap-4 py-6">
+                    <a href="/aboutus" class="text-[14px] font-semibold text-elegant-black/80 hover:text-primary-green transition-colors">About Us</a>
+                    <a href="/events" class="text-[14px] font-semibold text-elegant-black/80 hover:text-primary-green transition-colors">Events</a>
+                    <a href="/work" class="text-[14px] font-semibold text-elegant-black/80 hover:text-primary-green transition-colors">Our Works</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-grow">
+            <slot />
+        </main>
+
+        <footer class="bg-primary-green pt-24 pb-12 text-off-white mt-auto">
+            <div class="mx-auto max-w-7xl px-8">
+                <div class="grid grid-cols-2 gap-12 md:grid-cols-6 mb-20">
+                    <div class="col-span-2">
+                        <div class="mb-6 text-2xl font-bold tracking-tighter uppercase italic flex items-center gap-1">
+                            <img src="/dari_logo_white.png" alt="Dari Events Logo" class="w-20" />
+                        </div>
+                        <p class="text-[15px] opacity-70 leading-relaxed max-w-xs">
+                            Strictly soul. Crafting unforgettable events with passion and precision.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h4 class="mb-6 text-[11px] font-bold uppercase tracking-[0.2em] text-off-white">Services</h4>
+                        <ul class="space-y-4 text-[15px] font-medium opacity-80">
+                            <li><a href="/events" class="hover:text-off-white transition-colors">Events</a></li>
+                            <li><a href="/work" class="hover:text-off-white transition-colors">Our Works</a></li>
+                            
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="mb-6 text-[11px] font-bold uppercase tracking-[0.2em] text-off-white">Company</h4>
+                        <ul class="space-y-4 text-[15px] font-medium opacity-80">
+                            <li><a href="/aboutus" class="hover:text-off-white transition-colors">About Us</a></li>
+
+                        </ul>
+                    </div>
+
+                    
+
+                    <div>
+  <h4 class="mb-6 text-[11px] font-bold uppercase tracking-[0.2em] text-off-white">Contact</h4>
+                
+                <!-- Phone Number -->
+                <div class="mb-4 flex items-center gap-3 group">
+                    <div class="w-8 h-8 rounded-full bg-off-white/5 flex items-center justify-center group-hover:bg-[#f5bd02]/20 transition-colors">
+                    <i class="fas fa-phone-alt text-sm text-off-white/60 group-hover:text-[#f5bd02] transition-colors"></i>
+                    </div>
+                    <a href="tel:+251935008618" class="text-off-white/60 hover:text-off-white text-sm font-body transition-colors">
+                    +251935008618
+                    </a>
+                </div>
+
+                <div class="mb-4 flex items-center gap-3 group">
+                    <div class="w-8 h-8 rounded-full bg-off-white/5 flex items-center justify-center group-hover:bg-[#f5bd02]/20 transition-colors">
+                    <i class="fas fa-phone-alt text-sm text-off-white/60 group-hover:text-[#f5bd02] transition-colors"></i>
+                    </div>
+                    <a href="tel:+251921605961" class="text-off-white/60 hover:text-off-white text-sm font-body transition-colors">
+                    +251921605961
+                    </a>
+                </div>
+                
+                <!-- Location -->
+                <div class="mb-6 flex items-center gap-3 group">
+                    <div class="w-8 h-8 rounded-full bg-off-white/5 flex items-center justify-center group-hover:bg-[#f5bd02]/20 transition-colors">
+                    <i class="fas fa-map-marker-alt text-sm text-off-white/60 group-hover:text-[#f5bd02] transition-colors"></i>
+                    </div>
+                    <span class="text-off-white/60 text-sm font-body">
+                    Bole Atlas, Addis Ababa, Ethiopia
+                    </span>
+                </div>
+                
+                <!-- Social Media Icons -->
+                <div class="flex gap-3 pt-2">
+                    <a href="https://instagram.com/darievents" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-off-white/5 flex items-center justify-center hover:bg-[#f5bd02] hover:scale-110 transition-all duration-300 group">
+                    <i class="fab fa-instagram text-lg text-off-white/60 group-hover:text-primary-green transition-colors"></i>
+                    </a>
+                    
+                    <a href="https://tiktok.com/@darievents" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-off-white/5 flex items-center justify-center hover:bg-[#f5bd02] hover:scale-110 transition-all duration-300 group">
+                    <i class="fab fa-tiktok text-lg text-off-white/60 group-hover:text-primary-green transition-colors"></i>
+                    </a>
+                    
+                    
+                    <!-- <a href="https://facebook.com/darievents" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-off-white/5 flex items-center justify-center hover:bg-[#f5bd02] hover:scale-110 transition-all duration-300 group">
+                    <i class="fab fa-linkedin text-lg text-off-white/60 group-hover:text-primary-green transition-colors"></i>
+                    </a> -->
+                    
+                    
+                </div>
+                </div>
+                </div>
+
+                <div class="flex flex-col justify-between border-t border-off-white/10 pt-10 text-[13px] font-medium opacity-40 md:flex-row gap-4">
+                    <p>© 2026 Dari Events. All rights reserved.</p>
+                    <div class="flex gap-8">
+                        <div class="flex gap-8">
+                        <a href="https://helmcreative.com.et" target="_blank" class="hover:opacity-100 transition-opacity text-off-white/70">
+                            Designed by <span class="text-off-white font-bold">Helm Creative</span>
+                        </a>
+                        </div>
+                </div>
+            </div>
+        </footer>
+        
+        <script>
+            // --- Curtain Animation Logic ---
+            document.addEventListener('astro:before-preparation', (ev) => {
+                const curtain = document.getElementById('page-curtain');
+                if (curtain) {
+                    const originalLoader = ev.loader;
+                    ev.loader = async function() {
+                        curtain.classList.remove('transition-none', 'translate-y-[100%]', 'translate-y-[-100%]');
+                        curtain.classList.add('translate-y-0');
+                        await new Promise(resolve => setTimeout(resolve, 700));
+                        await originalLoader();
+                    };
+                }
+            });
+
+            document.addEventListener('astro:after-swap', () => {
+                const curtain = document.getElementById('page-curtain');
+                if (curtain) {
+                    curtain.classList.remove('translate-y-0');
+                    curtain.classList.add('translate-y-[100%]');
+                    
+                    setTimeout(() => {
+                        curtain.classList.add('transition-none');
+                        curtain.classList.remove('translate-y-[100%]');
+                        curtain.classList.add('translate-y-[-100%]');
+                        curtain.offsetHeight; // Force reflow
+                        curtain.classList.remove('transition-none');
+                    }, 700);
+                }
+            });
+
+            // --- Menu Logic (Wrapped in page-load for ViewTransitions) ---
+            document.addEventListener('astro:page-load', () => {
+                const menuToggle = document.getElementById('menu-toggle');
+                const mobileMenu = document.getElementById('mobile-menu');
+                
+                menuToggle?.addEventListener('click', function() {
+                    mobileMenu?.classList.toggle('hidden');
+                });
+            });
+        </script>
+    </body>
+</html>

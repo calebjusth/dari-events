@@ -1,0 +1,169 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// SEO Data
+const pageTitle = "Upcoming Events | Dari Events - Cinematic Experiences in Addis Ababa";
+const pageDescription = "Discover upcoming cinematic events, nightlife experiences, and cultural gatherings in Addis Ababa. Join us for unforgettable moments curated by Dari Events.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <main class="min-h-screen bg-[#042425] overflow-hidden selection:bg-[#f5bd02] selection:text-[#042425]">
+    
+    <section class="relative py-32 px-6 md:px-12 lg:px-24">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center max-w-4xl mx-auto">
+          <span class="inline-block text-[#f5bd02] font-bold uppercase tracking-[0.4em] text-xs mb-6">The Calendar</span>
+          <h1 class="text-6xl md:text-7xl lg:text-8xl font-main font-bold tracking-tighter text-[#F8FAF9] mb-6">
+            Upcoming Events
+          </h1>
+          <div class="w-20 h-px bg-[#f5bd02]/50 mx-auto mb-6"></div>
+          <p class="text-[#F8FAF9]/60 text-lg font-body leading-relaxed max-w-2xl mx-auto">
+            Curated cinematic moments designed for those who appreciate the intersection of culture and atmosphere.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="px-6 md:px-12 lg:px-24 pb-28">
+      <div class="max-w-7xl mx-auto">
+        <div class="mb-16">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-px bg-[#f5bd02]"></div>
+            <span class="text-[#f5bd02] text-sm uppercase tracking-[0.3em] font-main font-bold">Upcoming</span>
+          </div>
+          <h2 class="text-4xl md:text-5xl font-main font-bold tracking-tighter text-[#F8FAF9]">
+            What's Next
+          </h2>
+        </div>
+
+        <div id="upcoming-loading" class="text-center py-20 text-white/20 animate-pulse">Loading experiences...</div>
+
+        <div id="upcoming-empty" class="hidden text-center py-20 bg-[#F8FAF9]/5 rounded-3xl border border-[#F8FAF9]/10">
+          <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#f5bd02]/10 mb-6">
+            <svg class="w-10 h-10 text-[#f5bd02]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          </div>
+          <h3 class="text-2xl font-main font-bold text-[#F8FAF9] mb-2">No Upcoming Events</h3>
+          <p class="text-[#F8FAF9]/50 font-body">Check back soon. Something exciting is being curated.</p>
+        </div>
+
+        <div id="upcoming-grid" class="grid gap-10 md:grid-cols-2 lg:grid-cols-3 opacity-0 transition-opacity duration-700">
+          </div>
+      </div>
+    </section>
+
+    <section id="past-section" class="px-6 md:px-12 lg:px-24 pb-28 hidden">
+      <div class="max-w-7xl mx-auto">
+        <div class="mb-16">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-px bg-[#F8FAF9]/30"></div>
+            <span class="text-[#F8FAF9]/40 text-sm uppercase tracking-[0.3em] font-main">Archive</span>
+          </div>
+          <h2 class="text-4xl md:text-5xl font-main font-bold tracking-tighter text-[#F8FAF9]/80">
+            Past Experiences
+          </h2>
+        </div>
+
+        <div id="past-grid" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  const PAYLOAD_URL = "https://cms.darievents.com";
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'long', day: 'numeric', year: 'numeric',
+    });
+  };
+
+  const initEventsPage = async () => {
+    const upcomingGrid = document.getElementById('upcoming-grid');
+    const upcomingLoading = document.getElementById('upcoming-loading');
+    const upcomingEmpty = document.getElementById('upcoming-empty');
+    const pastGrid = document.getElementById('past-grid');
+    const pastSection = document.getElementById('past-section');
+
+    if (!upcomingGrid) return;
+
+    try {
+      const response = await fetch(`${PAYLOAD_URL}/api/events?sort=date&depth=2`);
+      const data = await response.json();
+      const allEvents = data.docs || [];
+
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+
+      // Filter & Sort
+      const upcoming = allEvents
+        .filter((e: any) => new Date(e.date).setHours(0,0,0,0) >= now.getTime())
+        .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+      const past = allEvents
+        .filter((e: any) => new Date(e.date).setHours(0,0,0,0) < now.getTime())
+        .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+      // Render Upcoming
+      upcomingLoading?.classList.add('hidden');
+      if (upcoming.length === 0) {
+        upcomingEmpty?.classList.remove('hidden');
+      } else {
+        upcomingGrid.innerHTML = upcoming.map((event: any) => `
+          <a href="/events/${event.id}" class="group relative flex flex-col rounded-3xl overflow-hidden bg-white/5 border border-white/10 transition-all duration-500 hover:border-[#f5bd02]/30 hover:-translate-y-2 cursor-pointer">
+            <div class="relative overflow-hidden h-72">
+              <img src="${PAYLOAD_URL}${event.poster.url}" alt="${event.title}" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110" />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#042425] via-transparent to-transparent opacity-60"></div>
+              <div class="absolute top-4 right-4 bg-[#042425]/90 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+                <span class="text-[#f5bd02] text-xs font-bold uppercase tracking-wide">${formatDate(event.date)}</span>
+              </div>
+            </div>
+            <div class="flex-1 flex flex-col p-8">
+              <div class="mb-4">
+                <div class="flex items-center gap-2 mb-3">
+                  <svg class="w-4 h-4 text-[#f5bd02]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  <span class="text-white/60 text-sm font-body">${event.location}</span>
+                </div>
+                <h3 class="text-white text-2xl md:text-3xl font-bold leading-tight font-main group-hover:text-[#f5bd02] transition-colors">${event.title}</h3>
+              </div>
+              <div class="mt-auto pt-6 flex flex-wrap gap-2">
+                ${(event.featuredArtists || []).slice(0, 3).map((a: any) => `
+                  <span class="text-[10px] px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-white/50 font-body">${a.name}</span>
+                `).join('')}
+              </div>
+            </div>
+          </a>
+        `).join('');
+        upcomingGrid.classList.remove('opacity-0');
+      }
+
+      // Render Past
+      if (past.length > 0 && pastGrid && pastSection) {
+        pastSection.classList.remove('hidden');
+        pastGrid.innerHTML = past.map((event: any) => `
+          <a href="/events/${event.id}" class="group relative flex flex-col rounded-3xl overflow-hidden bg-white/5 border border-white/10 transition-all duration-500 opacity-80 hover:opacity-100">
+            <div class="relative overflow-hidden h-64">
+              <img src="${PAYLOAD_URL}${event.poster.url}" alt="${event.title}" class="w-full h-full object-cover transition-all duration-700 grayscale group-hover:grayscale-0" />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#042425] via-[#042425]/50 to-transparent"></div>
+              <div class="absolute top-4 left-4 bg-black/80 backdrop-blur-sm rounded-full px-4 py-1.5 border border-white/20">
+                <span class="text-white/60 text-[10px] font-bold uppercase tracking-wider">Past Event</span>
+              </div>
+            </div>
+            <div class="flex-1 flex flex-col p-6">
+              <h3 class="text-white/80 text-xl font-bold font-main">${event.title}</h3>
+              <p class="text-white/40 text-xs mt-2">${formatDate(event.date)} — ${event.location}</p>
+            </div>
+          </a>
+        `).join('');
+      }
+
+    } catch (err) {
+      console.error("Failed to load events:", err);
+      upcomingLoading!.innerText = "Failed to load events. Please try again.";
+    }
+  };
+
+  document.addEventListener('astro:page-load', initEventsPage);
+  if (document.readyState === 'complete') initEventsPage();
+</script>
