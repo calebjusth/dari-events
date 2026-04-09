@@ -8,9 +8,9 @@
     <div class="absolute inset-0">
       <img
         id="hero-bg"
-        src="hero.png"
+        src="/IMG_3759.JPG"
         alt="Dari Events hero"
-        class="h-full w-full object-cover object-center opacity-60"
+        class="h-full w-full object-cover object-center "
       />
       <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#080e0d]/80"></div>
     </div>
@@ -20,14 +20,14 @@
         
         <div class="text-[#F8FAF9]">
           <h1 class="hero-reveal-wrapper relative overflow-hidden text-5xl font-bold leading-[0.9] tracking-tighter md:text-8xl lg:text-9xl">
-            <span class="hero-reveal-item inline-block translate-y-full">Strictly Soul</span>
+            <span class="hero-reveal-item inline-block translate-y-full">Dari Events</span>
           </h1>
         </div>
 
         <div class="text-[#F8FAF9] lg:mt-12">
           <div class="hero-reveal-wrapper relative overflow-hidden">
             <p class="hero-reveal-item translate-y-full mt-2 text-lg md:text-2xl opacity-90 font-medium leading-relaxed max-w-md">
-              Rooted in disruption (politely) and passion, we craft events that leave a lasting emotional impact.
+              An Experinece curation agency based in Addis Ababa Ethiopia. We disrtup the norm and deliver the extraordinary.
             </p>
           </div>
         </div>
@@ -59,38 +59,39 @@
   }
 </style>
 
-<script>
+<script type="module">
   import { gsap } from 'gsap';
 
+  let heroAnimated = false;
+
   const animateHero = () => {
+    if (heroAnimated) return;
     const section = document.querySelector('#hero-section');
     if (!section) return;
 
+    heroAnimated = true;
     const items = section.querySelectorAll('.hero-reveal-item');
     const bg = section.querySelector('#hero-bg');
 
     let ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
 
-      // 1. Zoom out the background image slightly
-      tl.fromTo(bg, 
-        { scale: 1.2, opacity: 0 }, 
+      tl.fromTo(bg,
+        { scale: 1.2, opacity: 0 },
         { scale: 1, opacity: 0.6, duration: 2 }
       );
 
-      // 2. Cascade the text reveals
       tl.to(items, {
-        y: "0%",
+        y: '0%',
         duration: 1.5,
         stagger: 0.15,
-      }, "-=1.5"); // Start while BG is zooming
+      }, '-=1.5');
 
     }, section);
   };
 
-  // Standard Astro page load listener
   document.addEventListener('astro:page-load', animateHero);
-  
-  // Fallback for non-Astro environments or direct refreshes
+  document.addEventListener('DOMContentLoaded', animateHero);
+  window.addEventListener('load', animateHero);
   if (document.readyState === 'complete') animateHero();
 </script>

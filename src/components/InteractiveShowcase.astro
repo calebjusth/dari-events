@@ -35,6 +35,9 @@
   const BACKEND_URL = 'https://cms.darievents.com'; // Update for production
 
   const fetchFeatured = async () => {
+    // Only run on client-side
+    if (typeof window === 'undefined') return;
+    
     const triggerContainer = document.getElementById('event-triggers-container');
     const imageContainer = document.getElementById('event-images-container');
     

@@ -35,6 +35,9 @@
   const PAYLOAD_URL = "https://cms.darievents.com"; 
 
   const fetchAndInit = async () => {
+    // Only run on client-side
+    if (typeof window === 'undefined') return;
+
     const container = document.querySelector('#horizontal-container');
     if (!container) return;
 
@@ -46,7 +49,7 @@
 
       // 2. Build the HTML string
       const cardsHtml = featuredWorks.map((work: any) => `
-        <div class="work-card relative group flex-shrink-0 w-full md:w-[85vw] h-[60vh] md:h-[75vh] bg-[#042425] rounded-[3rem] overflow-hidden shadow-2xl border border-white/5">
+        <div class="work-card relative group flex-shrink-0 w-full md:w-[85vw] h-[60vh] md:h-[75vh] bg-[#042425] rounded-[3rem] overflow-hidden  border border-white/5">
           <img 
             src="${PAYLOAD_URL}${work.mainMedia.url}" 
             alt="${work.eventName}" 
@@ -66,7 +69,7 @@
               </p>
               <div class="flex flex-wrap items-center gap-6">
                 ${work.relatedCaseStudy ? `
-                  <a href="/case-studies/${work.relatedCaseStudy.id || work.relatedCaseStudy}" class="group/btn inline-flex items-center gap-3 px-8 py-4 bg-[#F8FAF9] text-[#042425] rounded-full font-main font-bold text-xs uppercase tracking-[0.2em] hover:bg-[#f5bd02] transition-all duration-500">
+                  <a href="/portfolio/${work.relatedCaseStudy.slug}" class="group/btn inline-flex items-center gap-3 px-8 py-4 bg-[#F8FAF9] text-[#042425] rounded-full font-main font-bold text-xs uppercase tracking-[0.2em] hover:bg-[#f5bd02] transition-all duration-500">
                     Explore Case Study <span class="group-hover/btn:translate-x-2 transition-transform">→</span>
                   </a>
                 ` : ''}

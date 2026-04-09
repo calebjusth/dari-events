@@ -1,16 +1,56 @@
 ---
-const companies = [
-  { name: "sinqee", logo: "/sample/sinqee.png" },
-  { name: "Ethio telecome", logo: "/sample/ethio.png" },
-  { name: "telebir", logo: "/sample/telebirr.png" },
-  { name: "arada", logo: "/sample/arada.png" },
+// src/components/Partners.astro
+
+// 1. Fallback data
+const fallbackCompanies = [
+  { name: "Sinqee", logo: "/sample/sinqee.png" },
+  { name: "Ethio Telecom", logo: "/sample/ethio.png" },
+  { name: "Telebirr", logo: "/sample/telebirr.png" },
+  { name: "Arada", logo: "/sample/arada.png" },
 ];
+
+let companies = [];
+const PAYLOAD_URL = import.meta.env.PAYLOAD_URL || 'http://localhost:3000';
+
+try {
+  // 2. Fetch with depth=1 to get the full logo object
+  const response = await fetch(`${PAYLOAD_URL}/api/partners?depth=1&limit=100`);
+  
+  if (!response.ok) throw new Error(`CMS responded with ${response.status}`);
+  
+  const data = await response.json();
+  
+  if (data.docs && data.docs.length > 0) {
+    companies = data.docs.map(doc => {
+      let logoUrl = '/sample/fallback-logo.png';
+      
+      if (doc.logo && doc.logo.url) {
+        // If the URL is already absolute (starts with http), use it. 
+        // Otherwise, prepend the PAYLOAD_URL
+        logoUrl = doc.logo.url.startsWith('http') 
+          ? doc.logo.url 
+          : `${PAYLOAD_URL}${doc.logo.url}`;
+      }
+
+      return {
+        name: doc.name,
+        logo: logoUrl
+      };
+    });
+  } else {
+    companies = fallbackCompanies;
+  }
+
+} catch (e) {
+  console.error("Partners Fetch Error:", e);
+  companies = fallbackCompanies;
+}
 ---
 
-<section class="bg-primary-green py-32 px-4">
+<section class="bg-[var(--color-primary-green)] py-32 px-4">
   <div class="mx-auto max-w-7xl text-center mb-20">
-    <h2 class="reveal text-4xl md:text-6xl font-bold text-off-white leading-tight">
-      Sponsers & <br />
+    <h2 class="reveal text-4xl md:text-6xl font-bold text-[var(--color-off-white)] leading-tight">
+      Sponsors & <br />
       Collabs
     </h2>
   </div>
@@ -18,11 +58,12 @@ const companies = [
   <div class="mx-auto max-w-7xl">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
       {companies.map((company) => (
-        <div class="reveal group flex items-center justify-center p-8 bg-off-white/10 backdrop-blur-sm rounded-2xl hover:bg-off-white/20 transition-all duration-300 hover:scale-105">
+        <div class="reveal group flex items-center justify-center p-8 bg-[var(--color-off-white)]/10 backdrop-blur-sm rounded-2xl hover:bg-[var(--color-off-white)]/20 transition-all duration-300 hover:scale-105">
           <img
             src={company.logo}
             alt={`${company.name} logo`}
             class="max-w-full max-h-16 md:max-h-20 object-contain filter brightness-0 invert opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+            loading="lazy"
           />
         </div>
       ))}
@@ -30,8 +71,22 @@ const companies = [
   </div>
 </section>
 
+<style>
+  .reveal {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal.active {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+</style>
+
 <script>
-  // Simple Intersection Observer to trigger the "reveal" classes
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {

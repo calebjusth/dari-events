@@ -1,51 +1,67 @@
 ---
 // src/components/FAQ.astro
+import React from 'react';
+
+// 1. Define a fallback so the site never "crashes" if the CMS is down
+const fallbackFaqs = [
+  {
+    question: 'How far in advance should I book an event?',
+    answer: 'We recommend booking at least 3-6 months ahead for larger events.'
+  }
+];
+
+let faqs = [];
+let error = false;
+
+try {
+  // 2. Fetch from Payload API (using the slug we created: 'faqs')
+  // Note: Use an environment variable for the URL in production
+  const response = await fetch(`${import.meta.env.PAYLOAD_URL || 'http://localhost:3000'}/api/faqs?limit=100`);
+  
+  if (!response.ok) throw new Error('Failed to fetch');
+  
+  const data = await response.json();
+  faqs = data.docs;
+} catch (e) {
+  console.error("Payload Fetch Error:", e);
+  faqs = fallbackFaqs; // Switch to fallback data
+  error = true;
+}
 ---
 
 <section class="px-4 py-16 md:py-24 bg-[var(--color-primary-green)]">
-  <div class="mx-auto max-w-6xl">
+  <div class="mx-auto max-w-6xl reveal-blur">
     <div class="text-center mb-12">
       <h2 class="text-4xl md:text-6xl font-bold text-[var(--color-off-white)]">Frequently Asked Questions</h2>
-      <p class="mt-4 text-lg md:text-xl text-[var(--color-off-white)]/80 max-w-3xl mx-auto">Answers to common questions about how Dari Events brings your vision to life.</p>
+      <p class="mt-4 text-lg md:text-xl text-[var(--color-off-white)]/80 max-w-3xl mx-auto">
+        {error ? "Information from our latest planning guide." : "Answers to common questions about how Dari Events brings your vision to life."}
+      </p>
     </div>
 
     <div class="space-y-4">
-      {[
-        {
-          question: 'How far in advance should I book an event?',
-          answer: 'We recommend booking at least 3-6 months ahead for corporate and large-scale events, and 1-3 months for smaller private gatherings to ensure venue and vendor availability.'
-        },
-        {
-          question: 'Can you manage events in multiple cities?',
-          answer: 'Absolutely. Dari Events has a regional network and can coordinate multi-city experiences with a local team in place for each location.'
-        },
-        {
-          question: 'What is included in your event planning packages?',
-          answer: 'Our packages include venue scouting, creative production, logistics, audio/visual, talent booking, guest management, and on-site production staff.'
-        },
-        {
-          question: 'Do you provide custom branding and theming?',
-          answer: 'Yes. We build bespoke themes that align with your brand identity, using design, lighting, and staging to consistently tell your story.'
-        },
-        {
-          question: 'How do we request a quote?',
-          answer: 'Use any contact option button in our contact section or email info@darievents.com with your event details, and we’ll send a tailored proposal within 24 hours.'
-        }
-      ].map((item, index) => (
-        <details class="group rounded-2xl border border-[var(--color-off-white)]/30 bg-[var(--color-off-white)]/10 p-6 text-[var(--color-off-white)] transition-all duration-300 hover:border-[var(--color-off-white)] hover:bg-[var(--color-off-white)]/20" open={index===0}>
-          <summary class="text-lg md:text-2xl font-bold cursor-pointer outline-none">{item.question}</summary>
-          <p class="mt-4 text-[var(--color-off-white)]/90 text-base md:text-lg leading-relaxed">{item.answer}</p>
-        </details>
-      ))}
+      {faqs.length > 0 ? (
+        faqs.map((item, index) => (
+          <details 
+            class="group rounded-2xl border border-[var(--color-off-white)]/30 bg-[var(--color-off-white)]/10 p-6 text-[var(--color-off-white)] transition-all duration-300 hover:border-[var(--color-off-white)] hover:bg-[var(--color-off-white)]/20" 
+            open={index === 0}
+          >
+            <summary class="text-lg md:text-2xl font-bold cursor-pointer outline-none list-none">
+              {item.question}
+            </summary>
+            <p class="mt-4 text-[var(--color-off-white)]/90 text-base md:text-lg leading-relaxed">
+              {item.answer}
+            </p>
+          </details>
+        ))
+      ) : (
+        <p class="text-center text-[var(--color-off-white)]">Check back soon for more updates.</p>
+      )}
     </div>
   </div>
 </section>
 
 <style>
-  details > summary {
-    list-style: none;
-  }
-
+  /* Keep your existing styles */
   details > summary::-webkit-details-marker {
     display: none;
   }
