@@ -1,4 +1,5 @@
 ---
+// @ts-nocheck
 // src/components/Partners.astro
 
 // 1. Fallback data
@@ -10,7 +11,7 @@ const fallbackCompanies = [
 ];
 
 let companies = [];
-const PAYLOAD_URL = import.meta.env.PAYLOAD_URL || 'http://localhost:3000';
+const PAYLOAD_URL = import.meta.env.PAYLOAD_URL || 'https://cms.darievents.com';
 
 try {
   // 2. Fetch with depth=1 to get the full logo object
@@ -21,7 +22,7 @@ try {
   const data = await response.json();
   
   if (data.docs && data.docs.length > 0) {
-    companies = data.docs.map(doc => {
+    companies = data.docs.map((doc: any) => {
       let logoUrl = '/sample/fallback-logo.png';
       
       if (doc.logo && doc.logo.url) {
@@ -57,7 +58,7 @@ try {
 
   <div class="mx-auto max-w-7xl">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-      {companies.map((company) => (
+      {companies.map((company: any) => (
         <div class="reveal group flex items-center justify-center p-8 bg-[var(--color-off-white)]/10 backdrop-blur-sm rounded-2xl hover:bg-[var(--color-off-white)]/20 transition-all duration-300 hover:scale-105">
           <img
             src={company.logo}
@@ -87,13 +88,23 @@ try {
 </style>
 
 <script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-      }
-    });
-  }, { threshold: 0.1 });
+  const initFeatureReveal = () => {
+    const items = document.querySelectorAll('.reveal');
+    if (!items.length) return;
 
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    items.forEach(el => observer.observe(el));
+  };
+
+  document.addEventListener('astro:page-load', initFeatureReveal);
+  document.addEventListener('DOMContentLoaded', initFeatureReveal);
+  window.addEventListener('load', initFeatureReveal);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') initFeatureReveal();
 </script>

@@ -265,10 +265,18 @@ import type { APIContext } from 'astro';
     });
   };
 
-  document.addEventListener('astro:page-load', () => {
+  let eventDetailLoaded = false;
+  const startEventDetail = () => {
+    if (eventDetailLoaded) return;
+    eventDetailLoaded = true;
     initEventPage();
     setupForm();
-  });
+  };
+
+  document.addEventListener('astro:page-load', startEventDetail);
+  document.addEventListener('DOMContentLoaded', startEventDetail);
+  window.addEventListener('load', startEventDetail);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') startEventDetail();
 </script>
 
 <style>

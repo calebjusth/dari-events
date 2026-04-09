@@ -206,15 +206,24 @@ const {
                 }
             });
 
-            // --- Menu Logic (Wrapped in page-load for ClientRouter) ---
-            document.addEventListener('astro:page-load', () => {
+            // --- Menu Logic (Wrapped in page-load / fallback for non-ClientRouter navigation) ---
+            let menuInitialized = false;
+            const initMenu = () => {
+                if (menuInitialized) return;
+                menuInitialized = true;
+
                 const menuToggle = document.getElementById('menu-toggle');
                 const mobileMenu = document.getElementById('mobile-menu');
-                
+
                 menuToggle?.addEventListener('click', function() {
                     mobileMenu?.classList.toggle('hidden');
                 });
-            });
+            };
+
+            document.addEventListener('astro:page-load', initMenu);
+            document.addEventListener('DOMContentLoaded', initMenu);
+            window.addEventListener('load', initMenu);
+            if (document.readyState === 'complete' || document.readyState === 'interactive') initMenu();
         </script>
     </body>
 </html>

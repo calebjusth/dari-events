@@ -34,7 +34,7 @@
   }
 </style>
 
-<script>
+<script type="module">
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -119,7 +119,16 @@
     });
   };
 
+  let galleryLoaded = false;
+  const startGallery = () => {
+    if (galleryLoaded) return;
+    galleryLoaded = true;
+    fetchGallery();
+  };
+
   // Run on load/navigation
-  document.addEventListener('astro:page-load', fetchGallery);
-  if (document.readyState === 'complete') fetchGallery();
+  document.addEventListener('astro:page-load', startGallery);
+  document.addEventListener('DOMContentLoaded', startGallery);
+  window.addEventListener('load', startGallery);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') startGallery();
 </script>

@@ -65,7 +65,7 @@
                         stroke-dasharray="282.7" stroke-dashoffset="197" 
                         class="text-off-white transition-all duration-1000" />
              </svg>
-             <span class="text-5xl font-bold text-off-white">600+</span>
+             <span class="text-5xl font-bold text-off-white">900+</span>
           </div>
           <p class="text-off-white/80 font-medium text-sm leading-snug">
             <strong>Guaranteed Attendees</strong> at our events
@@ -109,13 +109,23 @@
 </style>
 
 <script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-      }
-    });
-  }, { threshold: 0.1 });
+  const initParallaxReveal = () => {
+    const items = document.querySelectorAll('.reveal-blur');
+    if (!items.length) return;
 
-  document.querySelectorAll('.reveal-blur').forEach(el => observer.observe(el));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    items.forEach(el => observer.observe(el));
+  };
+
+  document.addEventListener('astro:page-load', initParallaxReveal);
+  document.addEventListener('DOMContentLoaded', initParallaxReveal);
+  window.addEventListener('load', initParallaxReveal);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') initParallaxReveal();
 </script>

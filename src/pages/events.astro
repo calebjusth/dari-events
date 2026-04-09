@@ -164,6 +164,15 @@ const pageDescription = "Discover upcoming cinematic events, nightlife experienc
     }
   };
 
-  document.addEventListener('astro:page-load', initEventsPage);
-  if (document.readyState === 'complete') initEventsPage();
+  let eventsPageLoaded = false;
+  const startEventsPage = () => {
+    if (eventsPageLoaded) return;
+    eventsPageLoaded = true;
+    initEventsPage();
+  };
+
+  document.addEventListener('astro:page-load', startEventsPage);
+  document.addEventListener('DOMContentLoaded', startEventsPage);
+  window.addEventListener('load', startEventsPage);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') startEventsPage();
 </script>

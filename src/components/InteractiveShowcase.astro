@@ -144,6 +144,15 @@
     });
   };
 
-  document.addEventListener('astro:page-load', fetchFeatured);
-  if (document.readyState === 'complete') fetchFeatured();
+  let interactiveShowcaseLoaded = false;
+  const startInteractiveShowcase = () => {
+    if (interactiveShowcaseLoaded) return;
+    interactiveShowcaseLoaded = true;
+    fetchFeatured();
+  };
+
+  document.addEventListener('astro:page-load', startInteractiveShowcase);
+  document.addEventListener('DOMContentLoaded', startInteractiveShowcase);
+  window.addEventListener('load', startInteractiveShowcase);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') startInteractiveShowcase();
 </script>

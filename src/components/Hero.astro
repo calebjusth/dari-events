@@ -20,13 +20,13 @@
         
         <div class="text-[#F8FAF9]">
           <h1 class="hero-reveal-wrapper relative overflow-hidden text-5xl font-bold leading-[0.9] tracking-tighter md:text-8xl lg:text-9xl">
-            <span class="hero-reveal-item inline-block translate-y-full">Dari Events</span>
+            <span class="hero-reveal-item inline-block">Dari Events</span>
           </h1>
         </div>
 
         <div class="text-[#F8FAF9] lg:mt-12">
           <div class="hero-reveal-wrapper relative overflow-hidden">
-            <p class="hero-reveal-item translate-y-full mt-2 text-lg md:text-2xl opacity-90 font-medium leading-relaxed max-w-md">
+            <p class="hero-reveal-item mt-2 text-lg md:text-2xl opacity-90 font-medium leading-relaxed max-w-md">
               An Experinece curation agency based in Addis Ababa Ethiopia. We disrtup the norm and deliver the extraordinary.
             </p>
           </div>
@@ -35,7 +35,7 @@
 
       <div class="mt-20 flex justify-start md:justify-center">
         <div class="hero-reveal-wrapper relative overflow-hidden rounded-xl">
-           <a href="/events" class="hero-reveal-item translate-y-full flex items-center gap-3 bg-[#042425] border border-white/10 px-10 py-5 text-lg font-bold text-[#F8FAF9] shadow-xl transition-all hover:bg-[#f5bd02] hover:text-black active:scale-95">
+           <a href="/events" class="hero-reveal-item flex items-center gap-3 bg-[#042425] border border-white/10 px-10 py-5 text-lg font-bold text-[#F8FAF9] shadow-xl transition-all hover:bg-[#f5bd02] hover:text-black active:scale-95">
             <span>Explore Our Events</span>
             <span class="text-xl">→</span>
           </a>
@@ -53,45 +53,55 @@
 </div>
 
 <style>
-  /* Ensure reveal items are hidden before JS kicks in */
+  .hero-reveal-wrapper {
+    overflow: hidden;
+  }
+
   .hero-reveal-item {
-    will-change: transform;
+    transform: translateY(26px);
+    opacity: 0;
+    transition: transform 0.8s ease, opacity 0.8s ease;
+    transition-delay: var(--delay, 0s);
+  }
+
+  #hero-bg {
+    transform: scale(1.15);
+    opacity: 0;
+    transition: transform 1.8s ease, opacity 1.8s ease;
+  }
+
+  #hero-section.hero-animate .hero-reveal-item {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  #hero-section.hero-animate #hero-bg {
+    transform: scale(1);
+    opacity: 0.65;
   }
 </style>
 
-<script type="module">
-  import { gsap } from 'gsap';
-
-  let heroAnimated = false;
-
-  const animateHero = () => {
-    if (heroAnimated) return;
+<script>
+  const initHeroReveal = () => {
     const section = document.querySelector('#hero-section');
-    if (!section) return;
+    if (!section || section.classList.contains('hero-animate')) return;
 
-    heroAnimated = true;
     const items = section.querySelectorAll('.hero-reveal-item');
-    const bg = section.querySelector('#hero-bg');
+    items.forEach((item, index) => {
+      item.style.setProperty('--delay', `${index * 0.12}s`);
+    });
 
-    let ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-
-      tl.fromTo(bg,
-        { scale: 1.2, opacity: 0 },
-        { scale: 1, opacity: 0.6, duration: 2 }
-      );
-
-      tl.to(items, {
-        y: '0%',
-        duration: 1.5,
-        stagger: 0.15,
-      }, '-=1.5');
-
-    }, section);
+    requestAnimationFrame(() => {
+      section.classList.add('hero-animate');
+    });
   };
 
-  document.addEventListener('astro:page-load', animateHero);
-  document.addEventListener('DOMContentLoaded', animateHero);
-  window.addEventListener('load', animateHero);
-  if (document.readyState === 'complete') animateHero();
+  const attachHeroListeners = () => {
+    document.addEventListener('astro:page-load', initHeroReveal);
+    document.addEventListener('DOMContentLoaded', initHeroReveal);
+    window.addEventListener('load', initHeroReveal);
+    if (document.readyState === 'complete' || document.readyState === 'interactive') initHeroReveal();
+  };
+
+  attachHeroListeners();
 </script>

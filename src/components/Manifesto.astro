@@ -9,11 +9,13 @@ const words = message.split(" ");
     <h2 class="manifesto-grid text-[clamp(2rem,4vw,5.5rem)] leading-[1.05] font-bold capitalize tracking-tighter text-[#F8FAF9] flex flex-wrap items-baseline">
       {words.map((word, index) => (
         <span class="word-wrapper relative inline-block overflow-hidden mr-[0.3em] py-[0.1em]">
-          <span class="word inline-block translate-y-[110%]">{word}</span>
+          <span class="word">
+            {word}
+          </span>
           
           {/* Index 4: experience-first */}
           {index === 4 && (
-            <span class="inline-jewel relative inline-block align-middle overflow-hidden bg-white/10 opacity-0 scale-0">
+            <span class="inline-jewel relative inline-block align-middle overflow-hidden bg-white/10">
               <img src="/hero-main.jpg" alt="Culture" class="absolute inset-0 w-full h-full object-cover" />
             </span>
           )}
@@ -22,21 +24,21 @@ const words = message.split(" ");
           
           {/* Index 11: culture */}
           {index === 11 && (
-            <span class="inline-jewel relative inline-block align-middle overflow-hidden bg-white/10 opacity-0 scale-0">
+            <span class="inline-jewel relative inline-block align-middle overflow-hidden bg-white/10">
                <img src="/DSC05738.jpg" alt="Moment" class="absolute inset-0 w-full h-full object-cover" />
             </span>
           )}
 
           {/* NEW Index 15: polite */}
           {index === 15 && (
-            <span class="inline-jewel relative inline-block align-middle overflow-hidden bg-white/10 opacity-0 scale-0">
+            <span class="inline-jewel relative inline-block align-middle overflow-hidden bg-white/10">
               <img src="/hero-main.jpg" alt="Impact" class="absolute inset-0 w-full h-full object-cover" />
             </span>
           )}
 
           {/* Index 20: cinematic */}
           {index === 20 && (
-            <span class="inline-icon relative inline-flex items-center justify-center bg-[#f5bd02] rounded-full align-middle opacity-0 scale-0">
+            <span class="inline-icon relative inline-flex items-center justify-center bg-[#f5bd02] rounded-full align-middle">
                 <img src="/hero-main.jpg" alt="Culture" class="absolute inset-0 w-full h-full object-cover" />               
             </span>
           )}
@@ -57,13 +59,31 @@ const words = message.split(" ");
     font-family: var(--font-main);
   }
 
-  /* Adjusted jewel sizing for larger text */
+  .word,
+  .inline-jewel,
+  .inline-icon {
+    opacity: 0;
+    transform: translateY(24px) scale(0.95);
+    transition: transform 0.8s ease, opacity 0.8s ease;
+    transition-delay: var(--delay, 0s);
+    display: inline-block;
+  }
+
+  .manifesto-animate .word,
+  .manifesto-animate .inline-jewel,
+  .manifesto-animate .inline-icon {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
   .inline-jewel {
-    width: 2.2em; 
+    width: 2.2em;
     height: 1.3em;
     border-radius: 4rem;
     margin-left: 0.15em;
     transform-origin: center;
+    position: relative;
+    overflow: hidden;
   }
 
   .inline-icon {
@@ -71,55 +91,46 @@ const words = message.split(" ");
     height: 1.2em;
     margin-left: 0.15em;
     transform-origin: center;
+    position: relative;
+    overflow: hidden;
   }
 </style>
 
-<script type="module">
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+<script>
+  const initManifesto = () => {
+    const section = document.querySelector('#manifesto');
+    if (!section || section.classList.contains('manifesto-animate')) return;
 
-  gsap.registerPlugin(ScrollTrigger);
+    const elements = section.querySelectorAll('.word, .inline-jewel, .inline-icon');
+    elements.forEach((el, index) => {
+      el.style.setProperty('--delay', `${index * 0.025}s`);
+    });
 
-  let manifestoAnimated = false;
+    section.classList.add('manifesto-animate');
+  };
 
-  const animateManifesto = () => {
-    if (manifestoAnimated) return;
+  const observeManifesto = () => {
     const section = document.querySelector('#manifesto');
     if (!section) return;
 
-    manifestoAnimated = true;
-    const words = section.querySelectorAll('.word');
-    const jewels = section.querySelectorAll('.inline-jewel, .inline-icon');
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            initManifesto();
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.2 });
 
-    let ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 75%',
-          toggleActions: 'play none none reverse'
-        }
-      });
-
-      tl.to(words, {
-        y: '0%',
-        duration: 1.1,
-        ease: 'power4.out',
-        stagger: 0.02
-      });
-
-      tl.to(jewels, {
-        scale: 1,
-        opacity: 1,
-        duration: 0.9,
-        ease: 'back.out(1.5)',
-        stagger: 0.08
-      }, '<');
-
-    }, section);
+      observer.observe(section);
+    } else {
+      initManifesto();
+    }
   };
 
-  document.addEventListener('astro:page-load', animateManifesto);
-  document.addEventListener('DOMContentLoaded', animateManifesto);
-  window.addEventListener('load', animateManifesto);
-  if (document.readyState === 'complete') animateManifesto();
+  document.addEventListener('astro:page-load', observeManifesto);
+  document.addEventListener('DOMContentLoaded', observeManifesto);
+  window.addEventListener('load', observeManifesto);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') observeManifesto();
 </script>

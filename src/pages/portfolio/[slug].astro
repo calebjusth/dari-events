@@ -191,8 +191,17 @@ import CaseStudyCard from '../../components/CaseStudyCard.astro';
     }
   };
 
-  document.addEventListener('astro:page-load', initPage);
-  if (document.readyState === 'complete') initPage();
+  let portfolioSlugLoaded = false;
+  const startPortfolioSlug = () => {
+    if (portfolioSlugLoaded) return;
+    portfolioSlugLoaded = true;
+    initPage();
+  };
+
+  document.addEventListener('astro:page-load', startPortfolioSlug);
+  document.addEventListener('DOMContentLoaded', startPortfolioSlug);
+  window.addEventListener('load', startPortfolioSlug);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') startPortfolioSlug();
 </script>
 
 <style>
