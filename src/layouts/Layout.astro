@@ -39,10 +39,10 @@ const {
     <body class="bg-primary-green font-body antialiased min-h-screen flex flex-col">
         <div 
           id="page-curtain" 
-          class="fixed inset-0 z-[100] bg-[#080600] pointer-events-none translate-y-[-100%] transition-transform duration-700 ease-[cubic-bezier(0.85,0,0.15,1)]"
+          class="fixed inset-0 z-100 bg-[#080600] pointer-events-none -translate-y-full transition-transform duration-700 ease-[cubic-bezier(0.85,0,0.15,1)]"
         ></div>
 
-        <header class="absolute fixed inset-x-0 top-0 z-50 flex justify-center p-4">
+        <header class="fixed inset-x-0 top-0 z-50 flex justify-center p-4">
             <nav class="flex w-full max-w-7xl items-center justify-between rounded-xl bg-off-white px-6 py-3 shadow-lg border border-gray-100">
                 <div class="flex items-center gap-8">
                     <a href="/" class="text-xl font-bold tracking-tighter text-elegant-black uppercase flex items-center gap-1">
@@ -67,16 +67,49 @@ const {
                 </div>
             </nav>
             
-            <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 bg-off-white shadow-lg border border-gray-100 rounded-b-xl mt-2 mx-4">
-                <div class="flex flex-col items-center gap-4 py-6">
-                    <a href="/aboutus" class="text-[14px] font-semibold text-elegant-black/80 hover:text-primary-green transition-colors">About Us</a>
-                    <a href="/events" class="text-[14px] font-semibold text-elegant-black/80 hover:text-primary-green transition-colors">Events</a>
-                    <a href="/work" class="text-[14px] font-semibold text-elegant-black/80 hover:text-primary-green transition-colors">Our Works</a>
+            <div id="mobile-menu" class="menu-overlay hidden fixed inset-0 z-60 overflow-hidden">
+                <div class="absolute inset-0 bg-primary-green/95 backdrop-blur-sm"></div>
+                <div class="relative mx-auto flex h-full max-w-7xl flex-col justify-between px-6 py-8 lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-10">
+                    <div class="flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <a href="/" class="text-2xl font-bold uppercase tracking-tight text-off-white">
+                                <img src="/dari_logo_white.png" alt="Dari Events Logo" class="w-28" />
+                            </a>
+                            <button id="menu-close" class="text-3xl text-off-white hover:text-off-white/80 transition">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="mt-16 space-y-10">
+                            <div class="space-y-6 menu-links">
+                                <a href="/aboutus" class="block text-3xl font-semibold uppercase tracking-[0.14em] text-off-white">About Us</a>
+                                <a href="/events" class="block text-3xl font-semibold uppercase tracking-[0.14em] text-off-white">Events</a>
+                                <a href="/work" class="block text-3xl font-semibold uppercase tracking-[0.14em] text-off-white">Our Works</a>
+                            </div>
+
+                            <p class="max-w-md text-base leading-relaxed text-off-white/80">
+                                Experience a premium event menu that takes over the screen with bold navigation, elegant visuals, and a seamless close flow.
+                            </p>
+
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                                <a href="tel:0935008618" class="inline-flex w-full items-center justify-center rounded-3xl bg-off-white px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-primary-green shadow-2xl shadow-black/10 transition hover:brightness-110 sm:w-auto">
+                                    Call Us
+                                </a>
+                                <a href="/events" class="inline-flex w-full items-center justify-center rounded-3xl border border-white/20 bg-white/10 px-8 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-off-white transition hover:border-white/40 sm:w-auto">
+                                    View Events
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative mt-12 h-[26.7rem] overflow-hidden rounded-4xl border border-white/10 shadow-2xl lg:mt-0">
+                        <img src="/inline_image1.jpg" alt="Event showcase" class="h-full w-full object-cover object-center" />
+                    </div>
                 </div>
             </div>
         </header>
 
-        <main class="flex-grow">
+        <main class="grow">
             <slot />
         </main>
 
@@ -206,17 +239,57 @@ const {
                 }
             });
 
-            // --- Menu Logic (Wrapped in page-load / fallback for non-ClientRouter navigation) ---
+            // --- Full-screen mobile menu overlay ---
             let menuInitialized = false;
             const initMenu = () => {
                 if (menuInitialized) return;
                 menuInitialized = true;
 
                 const menuToggle = document.getElementById('menu-toggle');
+                const menuClose = document.getElementById('menu-close');
                 const mobileMenu = document.getElementById('mobile-menu');
 
-                menuToggle?.addEventListener('click', function() {
-                    mobileMenu?.classList.toggle('hidden');
+                if (!menuToggle || !mobileMenu) return;
+
+                /**
+                 * @param {boolean} open
+                 */
+                const toggleIcon = (open) => {
+                    menuToggle.innerHTML = open
+                        ? '<i class="fas fa-times"></i>'
+                        : '<i class="fas fa-bars"></i>';
+                };
+
+                const openMenu = () => {
+                    mobileMenu.classList.remove('hidden');
+                    document.body.classList.add('overflow-hidden');
+                    requestAnimationFrame(() => {
+                        mobileMenu.classList.add('menu-open');
+                    });
+                    toggleIcon(true);
+                };
+
+                const closeMenu = () => {
+                    mobileMenu.classList.remove('menu-open');
+                    document.body.classList.remove('overflow-hidden');
+
+                    const removeHidden = () => {
+                        mobileMenu.classList.add('hidden');
+                        mobileMenu.removeEventListener('transitionend', removeHidden);
+                    };
+
+                    mobileMenu.addEventListener('transitionend', removeHidden);
+                    toggleIcon(false);
+                };
+
+                menuToggle.addEventListener('click', () => {
+                    mobileMenu.classList.contains('menu-open') ? closeMenu() : openMenu();
+                });
+
+                menuClose?.addEventListener('click', closeMenu);
+
+                mobileMenu.addEventListener('click', (event) => {
+                    if (event.target === mobileMenu) closeMenu();
                 });
             };
 
@@ -225,5 +298,33 @@ const {
             window.addEventListener('load', initMenu);
             if (document.readyState === 'complete' || document.readyState === 'interactive') initMenu();
         </script>
+
+        <style is:global>
+            .menu-overlay {
+                transform: translateY(-100%);
+                opacity: 0;
+                transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease;
+            }
+
+            .menu-overlay.menu-open {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            .menu-links > * {
+                opacity: 0;
+                transform: translateX(-22px);
+                transition: transform 0.5s ease, opacity 0.5s ease;
+            }
+
+            .menu-overlay.menu-open .menu-links > * {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            .menu-overlay.menu-open .menu-links > *:nth-child(1) { transition-delay: 0.12s; }
+            .menu-overlay.menu-open .menu-links > *:nth-child(2) { transition-delay: 0.18s; }
+            .menu-overlay.menu-open .menu-links > *:nth-child(3) { transition-delay: 0.24s; }
+        </style>
     </body>
 </html>
