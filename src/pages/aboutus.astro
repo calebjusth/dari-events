@@ -4,10 +4,48 @@ import Layout from '../layouts/Layout.astro';
 // SEO Data
 const pageTitle = "About Dari Events | Premium Event Agency in Addis Ababa";
 const pageDescription = "Dari Events is an experience-first events agency reshaping entertainment, brands, and culture in Ethiopia. Discover our story, impact, and featured projects.";
+
+const services = [
+  { 
+    title: "BTL Activations", 
+    desc: "Immersive brand experiences that connect directly with audiences through innovative activations.",
+    image: "/static/image8.jpg"
+  },
+  { 
+    title: "Corporate Events", 
+    desc: "Flawless execution for high-stakes brand moments and corporate gatherings.",
+    image: "/static/cor.jpg"
+  },
+  { 
+    title: "Concert & Entertainment", 
+    desc: "World-class music experiences and live productions that set the standard.",
+    image: "/static/image5.jpg"
+  },
+  { 
+    title: "Community Events", 
+    desc: "Meaningful gatherings that foster genuine connection and shared experiences.",
+    image: "/static/image3.jpg"
+  },
+  { 
+    title: "Event Production", 
+    desc: "End-to-end operational excellence from concept to completion.",
+    image: "/static/image4.jpg"
+  },
+  { 
+    title: "Sponsorship", 
+    desc: "Strategic partnerships that amplify impact and elevate every event.",
+    image: "/static/image7.jpg"
+  },
+  { 
+    title: "Analytics", 
+    desc: "Data-driven insights for measurable impact and future growth.",
+    image: "/static/image6.jpg"
+  }
+];
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
-  <main class="min-h-screen overflow-x-hidden selection:bg-[#f5bd02] selection:text-primary-green bg-black text-off-white">
+  <main class="min-h-screen overflow-x-hidden selection:bg-[#f5bd02] selection:text-black  text-off-white">
     
     <section class="relative min-h-[60vh] md:min-h-[70vh] w-full flex items-start md:items-end justify-center pb-20 md:pb-24 px-6 md:px-12 lg:px-24 pt-32 overflow-hidden bg-cover bg-center" style="background-image: url('/hero-main.jpg');">
       <div class="absolute inset-0 bg-black/65"></div>
@@ -27,7 +65,7 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
       </div>
     </section>
 
-    <section class="py-28 px-6 md:px-12 lg:px-24 relative z-10">
+    <section class="py-28 px-6 md:px-12 lg:px-24 relative z-10 ">
       <div class="max-w-7xl mx-auto">
         <div class="grid lg:grid-cols-2 gap-20 items-start">
           <div>
@@ -79,72 +117,41 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
       </div>
     </section>
 
-    <div class="relative w-full" id="services-container">
-      {[
-        { 
-          title: "BTL Activations", 
-          desc: "Immersive brand experiences that connect directly with audiences through innovative activations.",
-          image: "/static/image8.jpg"
-        },
-        { 
-          title: "Corporate Events", 
-          desc: "Flawless execution for high-stakes brand moments and corporate gatherings.",
-          image: "/static/cor.jpg"
-        },
-        { 
-          title: "Concert & Entertainment", 
-          desc: "World-class music experiences and live productions that set the standard.",
-          image: "/static/image5.jpg"
-        },
-        { 
-          title: "Community Events", 
-          desc: "Meaningful gatherings that foster genuine connection and shared experiences.",
-          image: "/static/image3.jpg"
-        },
-        { 
-          title: "Event Production", 
-          desc: "End-to-end operational excellence from concept to completion.",
-          image: "/static/image4.jpg"
-        },
-        { 
-          title: "Sponsorship", 
-          desc: "Strategic partnerships that amplify impact and elevate every event.",
-          image: "/static/image7.jpg"
-        },
-        { 
-          title: "Analytics", 
-          desc: "Data-driven insights for measurable impact and future growth.",
-          image: "/static/image6.jpg"
-        }
-      ].map((service, i) => (
-        // STICKY TOP-0 handles the pinning naturally. The service-card class hooks into our JS.
-        <div class="service-card sticky top-0 h-screen w-full overflow-hidden shadow-[0_-15px_40px_rgba(0,0,0,0.6)] bg-black" data-index={i}>
-          
+    <div class="relative w-full pb-[10vh]" id="services-container">
+      {services.map((service, i) => (
+        <div 
+          class="service-card sticky top-0 h-[100dvh] w-full overflow-hidden bg-black shadow-[0_-10px_40px_rgba(0,0,0,0.5)]" 
+          data-index={i}
+        >
           <div 
-            class="service-bg absolute inset-0 bg-cover bg-center w-full h-full will-change-transform"
+            class="service-bg absolute inset-0 w-full h-full bg-cover bg-center origin-top will-change-transform transition-transform duration-75"
             style={`background-image: url('${service.image}');`}
-          >
-            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/20"></div>
-          </div>
+          ></div>
           
-          <div class="service-content relative z-10 h-full w-full flex flex-col justify-end pb-16 md:pb-24 will-change-transform opacity-0 transform translate-y-12 transition-all duration-[600ms] ease-out">
+          <div class="absolute bottom-0 left-0 w-full h-[60%] bg-gradient-to-t from-black/95 via-black/70 to-transparent z-10 pointer-events-none"></div>
+          
+          <div class="service-content relative z-20 h-full w-full flex flex-col justify-end pb-16 md:pb-24">
             <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 w-full">
-              <div class="grid lg:grid-cols-2 gap-8 lg:gap-16 items-end">
-                <div>
-                  <span class="inline-block font-main text-[11px] uppercase tracking-[0.5em] text-[#f5bd02] mb-4 drop-shadow-md">
-                    0{i + 1} — {service.title.split(' ')[0]}
+              <div class="grid lg:grid-cols-12 gap-6 lg:gap-16 items-end border-t border-white/10 pt-8">
+                
+                <div class="lg:col-span-3">
+                  <span class="inline-block font-main text-xs md:text-sm uppercase tracking-[0.3em] text-[#f5bd02] mb-4">
+                    0{i + 1} // {service.title.split(' ')[0]}
                   </span>
-                  <h2 class="text-5xl md:text-6xl lg:text-7xl font-main font-bold tracking-tighter text-off-white leading-tight drop-shadow-lg">
+                </div>
+
+                <div class="lg:col-span-6">
+                  <h2 class="text-4xl md:text-6xl lg:text-7xl font-main font-bold tracking-tighter text-white leading-none">
                     {service.title}
                   </h2>
-                  <div class="w-24 h-1 bg-[#f5bd02] mt-6 shadow-sm"></div>
                 </div>
                 
-                <div>
-                  <p class="text-lg md:text-xl text-off-white/90 font-body leading-relaxed drop-shadow-md">
+                <div class="lg:col-span-3">
+                  <p class="text-base md:text-lg text-white/80 font-body leading-relaxed max-w-xs">
                     {service.desc}
                   </p>
                 </div>
+                
               </div>
             </div>
           </div>
@@ -152,18 +159,18 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
       ))}
     </div>
 
-    <section class="relative z-20 py-28 px-6 md:px-12 lg:px-24   shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
+    <section class="relative z-30 py-32 px-6 md:px-12 lg:px-24 border-t border-white/5">
       <div class="max-w-4xl mx-auto text-center">
         <span class="inline-block font-main text-[11px] uppercase tracking-[0.5em] text-[#f5bd02] mb-6">Why Choose Us</span>
-        <h2 class="text-5xl md:text-6xl font-main font-bold tracking-tighter text-off-white mb-8">
+        <h2 class="text-5xl md:text-6xl lg:text-7xl font-main font-bold tracking-tighter text-white mb-8">
           Bold Creativity.<br />Operational Mastery.
         </h2>
-        <div class="w-20 h-px bg-[#f5bd02]/50 mx-auto mb-8"></div>
-        <p class="text-xl text-off-white/70 font-body leading-relaxed mb-12">
-          We merge bold creativity with operational mastery to deliver standout experiences that live in culture, not just in memory. For brands ready to elevate their presence, inspire audiences, and create moments that matter — Dari Events is the partner that makes it happen.
+        <div class="w-16 h-px bg-[#f5bd02] mx-auto mb-10"></div>
+        <p class="text-lg md:text-xl text-white/60 font-body leading-relaxed mb-12 max-w-2xl mx-auto">
+          We merge bold creativity with operational mastery to deliver standout experiences that live in culture, not just in memory. For brands ready to elevate their presence, inspire audiences, and create moments that matter.
         </p>
         <a href="/" class="animated-border-button group relative inline-flex items-center justify-center px-10 py-4 overflow-hidden rounded-full bg-transparent transition-all duration-300">
-          <span class="relative z-10 font-main font-bold uppercase tracking-[0.2em] text-sm text-off-white group-hover:text-primary-green transition-colors duration-300">Explore Our Events</span>
+          <span class="relative z-10 font-main font-bold uppercase tracking-[0.2em] text-xs text-white group-hover:text-black transition-colors duration-300">Explore Our Events</span>
           <span class="absolute inset-0 rounded-full bg-[#f5bd02] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
         </a>
       </div>
@@ -181,50 +188,34 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
     function updateCards() {
       const windowHeight = window.innerHeight;
 
-      cards.forEach((card, index) => {
+      cards.forEach((card) => {
         const rect = card.getBoundingClientRect();
-        const top = rect.top;
-        
-        const content = card.querySelector('.service-content') as HTMLElement;
         const bg = card.querySelector('.service-bg') as HTMLElement;
+        const content = card.querySelector('.service-content') as HTMLElement;
 
-        if (!content || !bg) return;
+        if (!bg || !content) return;
 
-        // Calculate how far the card has scrolled into view (0 to 1)
-        // 0 = just entered bottom of screen, 1 = pinned at the top
-        const scrollPercent = 1 - (top / windowHeight);
-
-        // If card is entering the viewport or currently active
-        if (top <= windowHeight && top >= 0) {
-          // Fade in and slide up effect for content
-          const translateY = Math.max(0, 50 - (scrollPercent * 50)); 
-          const opacity = Math.min(1, scrollPercent * 1.5); 
+        // If the card has reached the top and is being covered by the next card
+        if (rect.top <= 0) {
+          // Calculate how far past the top we've scrolled
+          const depth = Math.abs(rect.top);
+          // Scale from 1 down to 0.9 maximum
+          const scale = Math.max(0.9, 1 - (depth / windowHeight) * 0.1);
+          // Optional: slight dimming effect as it pushes back into the stack
+          const opacity = Math.max(0.4, 1 - (depth / windowHeight) * 0.8);
           
-          content.style.transform = `translateY(${translateY}px)`;
-          content.style.opacity = opacity.toString();
-
-          // Subtle zoom out on the background image for depth
-          const scale = 1.1 - (scrollPercent * 0.1); // Starts at 1.1x, scales down to 1x
           bg.style.transform = `scale(${scale})`;
-          
-        } else if (top < 0) {
-          // The card is pinned at the top (covered by subsequent cards)
-          // Keep it perfectly locked in its final state
-          content.style.transform = `translateY(0px)`;
-          content.style.opacity = '1';
-          bg.style.transform = `scale(1)`;
+          content.style.opacity = opacity.toString();
         } else {
-          // Card is completely below the viewport
-          content.style.transform = `translateY(50px)`;
-          content.style.opacity = '0';
-          bg.style.transform = `scale(1.1)`;
+          // Card is still scrolling into view (normal state)
+          bg.style.transform = `scale(1)`;
+          content.style.opacity = '1';
         }
       });
       
       ticking = false;
     }
 
-    // Use requestAnimationFrame for buttery smooth 60fps scrolling
     window.addEventListener('scroll', () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
@@ -234,16 +225,17 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
       }
     }, { passive: true });
 
-    // Trigger once on load
+    // Run once to set initial states
     updateCards();
   }
 
-  // Support standard loads and Astro ViewTransitions
+  // Astro specific load events
   document.addEventListener('DOMContentLoaded', initScrollyTelling);
   document.addEventListener('astro:page-load', initScrollyTelling);
 </script>
 
-<style>
+<style is:global>
+
   /* Animated Border Button */
   .animated-border-button {
     background: transparent;
@@ -256,15 +248,14 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
     position: absolute;
     inset: 0;
     border-radius: 9999px;
-    padding: 2px;
+    padding: 1px;
     background: linear-gradient(
       90deg,
       #f5bd02,
-      #ff6b6b,
-      #4ecdc4,
+      rgba(245, 189, 2, 0.2),
       #f5bd02
     );
-    background-size: 300% 100%;
+    background-size: 200% 100%;
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
@@ -274,12 +265,11 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
   
   @keyframes border-run {
     0% { background-position: 0% 0%; }
-    100% { background-position: 300% 0%; }
+    100% { background-position: 200% 0%; }
   }
   
-  /* Custom scrollbar matching brand colors */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: #000000; }
-  ::-webkit-scrollbar-thumb { background: #f5bd02; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #dca900; }
+  ::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #f5bd02; }
 </style>
