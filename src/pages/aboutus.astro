@@ -7,9 +7,8 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
-  <main class="min-h-screen  overflow-hidden selection:bg-[#f5bd02] selection:text-primary-green">
+  <main class="min-h-screen overflow-x-hidden selection:bg-[#f5bd02] selection:text-primary-green bg-black text-off-white">
     
-    <!-- Hero Section -->
     <section class="relative min-h-[60vh] md:min-h-[70vh] w-full flex items-start md:items-end justify-center pb-20 md:pb-24 px-6 md:px-12 lg:px-24 pt-32 overflow-hidden bg-cover bg-center" style="background-image: url('/hero-main.jpg');">
       <div class="absolute inset-0 bg-black/65"></div>
       <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/90"></div>
@@ -28,8 +27,7 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
       </div>
     </section>
 
-    <!-- Story Section -->
-    <section class="py-28 px-6 md:px-12 lg:px-24 ">
+    <section class="py-28 px-6 md:px-12 lg:px-24 relative z-10">
       <div class="max-w-7xl mx-auto">
         <div class="grid lg:grid-cols-2 gap-20 items-start">
           <div>
@@ -51,7 +49,7 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
           </div>
           
           <div class="space-y-8">
-          <div class="relative rounded-3xl overflow-hidden border border-off-white/10 p-8 bg-cover bg-center" style="background-image: url('/DSC05738.jpg');">
+            <div class="relative rounded-3xl overflow-hidden border border-off-white/10 p-8 bg-cover bg-center" style="background-image: url('/DSC05738.jpg');">
               <div class="absolute inset-0 bg-black/60"></div>
               <div class="absolute top-0 right-0 w-32 h-32 bg-[#f5bd02]/5 rounded-full blur-3xl"></div>
               <div class="relative z-10">
@@ -67,11 +65,11 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
             </div>
             
             <div class="grid grid-cols-2 gap-4">
-              <div class="p-6 rounded-2xl bg-off-white/5 border border-off-white/10">
+              <div class="p-6 rounded-2xl bg-off-white/5 border border-off-white/10 transition-colors hover:bg-off-white/10 cursor-default">
                 <div class="text-3xl font-main font-bold text-[#f5bd02] mb-2">Rooted</div>
                 <p class="text-xs uppercase tracking-wider text-off-white/40">In disruption (politely)</p>
               </div>
-              <div class="p-6 rounded-2xl bg-off-white/5 border border-off-white/10">
+              <div class="p-6 rounded-2xl bg-off-white/5 border border-off-white/10 transition-colors hover:bg-off-white/10 cursor-default">
                 <div class="text-3xl font-main font-bold text-[#f5bd02] mb-2">Driven</div>
                 <p class="text-xs uppercase tracking-wider text-off-white/40">By passion & purpose</p>
               </div>
@@ -81,72 +79,80 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
       </div>
     </section>
 
-    <!-- What We Do & Differentiators -->
-    <section class="py-28 px-6 md:px-12 lg:px-24  border-y border-off-white/5">
-      <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-20">
-          <span class="inline-block font-main text-[11px] uppercase tracking-[0.5em] text-[#f5bd02] mb-4">Our Expertise</span>
-          <h2 class="text-5xl md:text-6xl font-main font-bold tracking-tighter text-off-white">What We Do</h2>
-          <div class="w-20 h-px bg-[#f5bd02]/50 mx-auto mt-6"></div>
-        </div>
-        
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
-          {[
-            { title: "BTL Activations", desc: "Immersive brand experiences that connect directly with audiences" },
-            { title: "Corporate Events & Brand Launches", desc: "Flawless execution for high-stakes brand moments" },
-            { title: "Concert & Entertainment", desc: "World-class music experiences and live productions" },
-            { title: "Community Engagement Events", desc: "Meaningful gatherings that foster connection" },
-            { title: "Event Production & Logistics", desc: "End-to-end operational excellence" },
-            { title: "Sponsorship & Talent Management", desc: "Strategic partnerships and artist relations" },
-            { title: "Post-Event Analytics & Reporting", desc: "Data-driven insights for measurable impact" }
-          ].map((item, i) => (
-            <div key={i} class="p-6 rounded-2xl bg-off-white/5 border border-off-white/10 hover:border-[#f5bd02]/30 transition-all duration-300 group">
-              <div class="w-10 h-10 rounded-full bg-[#f5bd02]/10 flex items-center justify-center mb-4 group-hover:bg-[#f5bd02]/20 transition-colors">
-                <svg class="w-5 h-5 text-[#f5bd02]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 class="font-main font-bold text-off-white mb-2">{item.title}</h3>
-              <p class="text-xs text-off-white/40 font-body leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-        
-        <div class="grid lg:grid-cols-2 gap-16">
-          <div>
-            <span class="inline-block font-main text-[11px] uppercase tracking-[0.5em] text-[#f5bd02] mb-6">What Sets Us Apart</span>
-            <h3 class="text-3xl md:text-4xl font-main font-bold tracking-tighter text-off-white mb-8">
-              Disruptors Elevating<br />Event Culture
-            </h3>
+    <div class="relative w-full" id="services-container">
+      {[
+        { 
+          title: "BTL Activations", 
+          desc: "Immersive brand experiences that connect directly with audiences through innovative activations.",
+          image: "/static/image8.jpg"
+        },
+        { 
+          title: "Corporate Events", 
+          desc: "Flawless execution for high-stakes brand moments and corporate gatherings.",
+          image: "/static/cor.jpg"
+        },
+        { 
+          title: "Concert & Entertainment", 
+          desc: "World-class music experiences and live productions that set the standard.",
+          image: "/static/image5.jpg"
+        },
+        { 
+          title: "Community Events", 
+          desc: "Meaningful gatherings that foster genuine connection and shared experiences.",
+          image: "/static/image3.jpg"
+        },
+        { 
+          title: "Event Production", 
+          desc: "End-to-end operational excellence from concept to completion.",
+          image: "/static/image4.jpg"
+        },
+        { 
+          title: "Sponsorship", 
+          desc: "Strategic partnerships that amplify impact and elevate every event.",
+          image: "/static/image7.jpg"
+        },
+        { 
+          title: "Analytics", 
+          desc: "Data-driven insights for measurable impact and future growth.",
+          image: "/static/image6.jpg"
+        }
+      ].map((service, i) => (
+        // STICKY TOP-0 handles the pinning naturally. The service-card class hooks into our JS.
+        <div class="service-card sticky top-0 h-screen w-full overflow-hidden shadow-[0_-15px_40px_rgba(0,0,0,0.6)] bg-black" data-index={i}>
+          
+          <div 
+            class="service-bg absolute inset-0 bg-cover bg-center w-full h-full will-change-transform"
+            style={`background-image: url('${service.image}');`}
+          >
+            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/20"></div>
           </div>
-          <div class="grid gap-4">
-            {[
-              "Experiences that spark emotion and connect communities",
-              "Youthful, energetic creativity grounded in disciplined planning",
-              "Fresh ideas that push boundaries",
-              "Flawless operations that eliminate stress",
-              "Measurable outcomes backed by data and analytics",
-              "A bold mission to change how the city experiences events"
-            ].map((item, i) => (
-              <div key={i} class="flex items-start gap-4 p-4 rounded-xl bg-off-white/5 border border-off-white/10">
-                <div class="w-5 h-5 rounded-full bg-[#f5bd02]/20 flex items-center justify-center mt-0.5">
-                  <div class="w-2 h-2 rounded-full bg-[#f5bd02]"></div>
+          
+          <div class="service-content relative z-10 h-full w-full flex flex-col justify-end pb-16 md:pb-24 will-change-transform opacity-0 transform translate-y-12 transition-all duration-[600ms] ease-out">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 w-full">
+              <div class="grid lg:grid-cols-2 gap-8 lg:gap-16 items-end">
+                <div>
+                  <span class="inline-block font-main text-[11px] uppercase tracking-[0.5em] text-[#f5bd02] mb-4 drop-shadow-md">
+                    0{i + 1} — {service.title.split(' ')[0]}
+                  </span>
+                  <h2 class="text-5xl md:text-6xl lg:text-7xl font-main font-bold tracking-tighter text-off-white leading-tight drop-shadow-lg">
+                    {service.title}
+                  </h2>
+                  <div class="w-24 h-1 bg-[#f5bd02] mt-6 shadow-sm"></div>
                 </div>
-                <p class="text-off-white/80 font-body text-sm">{item}</p>
+                
+                <div>
+                  <p class="text-lg md:text-xl text-off-white/90 font-body leading-relaxed drop-shadow-md">
+                    {service.desc}
+                  </p>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      ))}
+    </div>
 
-
-
-    <!-- Leadership & Collaborators -->
-    
-
-    <!-- Why Dari Events -->
-    <section class="py-28 px-6 md:px-12 lg:px-24  border-y border-off-white/5">
+    <section class="relative z-20 py-28 px-6 md:px-12 lg:px-24   shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
       <div class="max-w-4xl mx-auto text-center">
         <span class="inline-block font-main text-[11px] uppercase tracking-[0.5em] text-[#f5bd02] mb-6">Why Choose Us</span>
         <h2 class="text-5xl md:text-6xl font-main font-bold tracking-tighter text-off-white mb-8">
@@ -164,6 +170,78 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
     </section>
   </main>
 </Layout>
+
+<script>
+  function initScrollyTelling() {
+    const cards = document.querySelectorAll('.service-card');
+    if (!cards.length) return;
+
+    let ticking = false;
+
+    function updateCards() {
+      const windowHeight = window.innerHeight;
+
+      cards.forEach((card, index) => {
+        const rect = card.getBoundingClientRect();
+        const top = rect.top;
+        
+        const content = card.querySelector('.service-content') as HTMLElement;
+        const bg = card.querySelector('.service-bg') as HTMLElement;
+
+        if (!content || !bg) return;
+
+        // Calculate how far the card has scrolled into view (0 to 1)
+        // 0 = just entered bottom of screen, 1 = pinned at the top
+        const scrollPercent = 1 - (top / windowHeight);
+
+        // If card is entering the viewport or currently active
+        if (top <= windowHeight && top >= 0) {
+          // Fade in and slide up effect for content
+          const translateY = Math.max(0, 50 - (scrollPercent * 50)); 
+          const opacity = Math.min(1, scrollPercent * 1.5); 
+          
+          content.style.transform = `translateY(${translateY}px)`;
+          content.style.opacity = opacity.toString();
+
+          // Subtle zoom out on the background image for depth
+          const scale = 1.1 - (scrollPercent * 0.1); // Starts at 1.1x, scales down to 1x
+          bg.style.transform = `scale(${scale})`;
+          
+        } else if (top < 0) {
+          // The card is pinned at the top (covered by subsequent cards)
+          // Keep it perfectly locked in its final state
+          content.style.transform = `translateY(0px)`;
+          content.style.opacity = '1';
+          bg.style.transform = `scale(1)`;
+        } else {
+          // Card is completely below the viewport
+          content.style.transform = `translateY(50px)`;
+          content.style.opacity = '0';
+          bg.style.transform = `scale(1.1)`;
+        }
+      });
+      
+      ticking = false;
+    }
+
+    // Use requestAnimationFrame for buttery smooth 60fps scrolling
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateCards();
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Trigger once on load
+    updateCards();
+  }
+
+  // Support standard loads and Astro ViewTransitions
+  document.addEventListener('DOMContentLoaded', initScrollyTelling);
+  document.addEventListener('astro:page-load', initScrollyTelling);
+</script>
 
 <style>
   /* Animated Border Button */
@@ -195,29 +273,13 @@ const pageDescription = "Dari Events is an experience-first events agency reshap
   }
   
   @keyframes border-run {
-    0% {
-      background-position: 0% 0%;
-    }
-    100% {
-      background-position: 300% 0%;
-    }
+    0% { background-position: 0% 0%; }
+    100% { background-position: 300% 0%; }
   }
   
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #042425;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #f5bd02;
-    border-radius: 3px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #f5bd02cc;
-  }
+  /* Custom scrollbar matching brand colors */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #000000; }
+  ::-webkit-scrollbar-thumb { background: #f5bd02; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #dca900; }
 </style>
