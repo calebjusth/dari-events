@@ -1,43 +1,45 @@
 ---
-// portfolio/index.astro
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Our Work | Dari Events">
-  <main class="min-h-screen bg-primary-green">
-    <section class="work-gallery pt-48 pb-20 px-4 md:px-8 lg:px-16">
-      <div class="max-w-7xl mx-auto">
-        
-        <div class="mb-20">
-          <p class="font-main uppercase tracking-[0.4em] text-[10px] mb-4 text-[#f5bd02]">Portfolio</p>
-          <h1 class="text-6xl md:text-8xl font-main italic text-[#f8f8f8] leading-tight">
+<Layout title="Archive | Dari Events" description="A curated selection of cinematic experiences and strategic event productions.">
+  <main class="min-h-screen bg-elegant-black text-off-white selection:bg-gold selection:text-elegant-black overflow-x-hidden">
+    
+    <header class="w-full pt-40 md:pt-56 pb-16 px-4 md:px-8 border-b border-off-white/20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-12 w-full">
+        <div class="flex-1">
+          <p class="text-gold uppercase tracking-[0.4em] text-[10px] font-bold mb-6">Archive / Index</p>
+          <h1 class="text-6xl md:text-[10vw] font-main font-bold uppercase leading-[0.85] tracking-tighter text-off-white break-words">
             Our Work
           </h1>
-          <p class="mt-8 text-xl text-[#f8f8f8]/60 max-w-2xl font-light leading-relaxed">
+        </div>
+        <div class="max-w-md md:text-right pb-2">
+          <p class="text-lg md:text-xl text-off-white/70 font-medium leading-tight border-l-2 md:border-l-0 md:border-r-2 border-gold pl-4 md:pl-0 md:pr-4">
             A curated selection of cinematic experiences and strategic event productions crafted for global impact.
           </p>
         </div>
+      </div>
+    </header>
 
-        <div id="portfolio-grid" class="gallery-grid gap-0">
-          {[...Array(6)].map((_, i) => (
-            <div class="gallery-item animate-pulse min-h-[540px]">
-              <div class="image-container bg-white/5 w-full">
-                <div class="image-fallback"></div>
-                <div class="card-tag absolute top-4 left-4 rounded-full bg-[#f5bd02]/15 px-4 py-2 text-xs uppercase tracking-[0.35em] text-[#f8f8f8] font-bold">
-                  Sample Project
-                </div>
-                <div class="overlay">
-                  <div class="overlay-content p-8 flex flex-col justify-end h-full">
-                    <div class="h-6 w-2/3 bg-white/10 rounded mb-4"></div>
-                    <div class="h-4 w-1/2 bg-white/10 rounded"></div>
-                  </div>
-                </div>
-              </div>
+    <section class="w-full">
+      <div id="portfolio-grid" class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-l border-off-white/20">
+        
+        {[...Array(6)].map((_, i) => (
+          <div class="border-b border-r border-off-white/20 h-[60vh] md:h-[75vh] flex flex-col bg-elegant-black animate-pulse">
+            <div class="flex-grow border-b border-off-white/20 bg-off-white/5 relative">
+              <div class="absolute top-4 right-4 bg-elegant-black border border-off-white/20 w-8 h-8"></div>
             </div>
-          ))}
-        </div>
+            <div class="h-1/4 min-h-[160px] p-6 flex flex-col justify-between">
+              <div class="w-1/3 h-3 bg-off-white/10 mb-4"></div>
+              <div class="w-3/4 h-8 bg-off-white/20"></div>
+              <div class="w-1/4 h-3 bg-off-white/10 mt-auto"></div>
+            </div>
+          </div>
+        ))}
+
       </div>
     </section>
+    
   </main>
 </Layout>
 
@@ -54,59 +56,73 @@ import Layout from '../layouts/Layout.astro';
       const works = data.docs;
 
       if (works.length > 0) {
-        grid.innerHTML = works.map((work: any) => {
+        grid.innerHTML = works.map((work: any, index: number) => {
           const slug = work.relatedCaseStudy?.slug;
           const hasCaseStudy = !!slug;
           const imageUrl = work.mainMedia?.url 
             ? `${BACKEND_URL}${work.mainMedia.url}` 
             : '/placeholder-event.jpg';
+          
+          // Formats index as 01, 02, etc.
+          const numberLabel = index + 1 < 10 ? `0${index + 1}` : `${index + 1}`;
 
-          // Generating the same HTML structure but as a string for injection
+          // Brutalist Grid Cell HTML
           return `
-            <${hasCaseStudy ? 'a href="/portfolio/' + slug + '"' : 'div'} class="gallery-item group">
-              <div class="image-container bg-[#f8f8f8]/5">
+            <${hasCaseStudy ? 'a href="/portfolio/' + slug + '"' : 'div'} class="group block border-b border-r border-off-white/20 h-[60vh] md:h-[75vh] flex flex-col bg-elegant-black cursor-pointer overflow-hidden">
+              
+              <div class="relative flex-grow border-b border-off-white/20 overflow-hidden bg-elegant-black">
                 <img 
                   src="${imageUrl}" 
                   alt="${work.eventName}" 
-                  class="gallery-image" 
+                  class="absolute inset-0 w-full h-full object-cover grayscale opacity-80 transition-all duration-1000 group-hover:scale-105 group-hover:grayscale-0 group-hover:opacity-100" 
                   loading="lazy"
                 />
-
-                <div class="card-tag absolute top-4 left-4 rounded-full bg-[#f5bd02]/15 px-4 py-2 text-xs uppercase tracking-[0.35em] text-[#f8f8f8] font-bold">
-                  ${work.eventName}
-                </div>
-                
-                <div class="overlay">
-                  <div class="overlay-content p-8 w-full text-left flex flex-col justify-end h-full">
-                    <p class="text-[#f5bd02] text-[10px] uppercase tracking-[0.3em] mb-2 opacity-0 group-hover:opacity-100 transition-all duration-700">
-                      ${work.client || 'Featured Event'}
-                    </p>
-                    
-                    <p class="text-sm md:text-base text-white/70 max-w-lg opacity-0 group-hover:opacity-100 transition-all duration-700 delay-100">
-                      ${work.shortDescription || 'A cinematic experience designed to move audiences.'}
-                    </p>
-                    
-                    ${hasCaseStudy ? `
-                      <div class="case-study-link opacity-0 group-hover:opacity-100 transition-all duration-700 delay-150 mt-6">
-                        <span class="text-white text-xs uppercase tracking-widest border-b border-white/40 pb-1 inline-flex items-center gap-2">
-                          Explore Case Study <span>→</span>
-                        </span>
-                      </div>
-                    ` : ''}
-                  </div>
+                <div class="absolute top-4 right-4 bg-elegant-black text-off-white border border-off-white/20 px-3 py-1 text-[10px] uppercase font-bold tracking-[0.2em] z-10 transition-colors duration-500 group-hover:bg-gold group-hover:text-elegant-black group-hover:border-gold">
+                  ${numberLabel}
                 </div>
               </div>
+
+              <div class="h-[180px] p-6 flex flex-col justify-between bg-elegant-black transition-colors duration-500 group-hover:bg-off-white">
+                <div>
+                  <p class="text-gold text-[10px] tracking-[0.3em] uppercase mb-3 font-bold transition-colors duration-500 group-hover:text-elegant-black/50 line-clamp-1">
+                    ${work.client || 'Featured Work'}
+                  </p>
+                  <h2 class="text-2xl md:text-3xl font-main font-bold uppercase text-off-white leading-none transition-colors duration-500 group-hover:text-elegant-black line-clamp-2">
+                    ${work.eventName}
+                  </h2>
+                </div>
+                
+                <div class="flex items-end justify-between mt-4">
+                  <p class="text-xs font-bold uppercase tracking-widest text-off-white/40 transition-colors duration-500 group-hover:text-elegant-black">
+                    ${hasCaseStudy ? 'Inspect Project' : 'View Details'}
+                  </p>
+                  <span class="text-gold text-2xl leading-none transition-transform duration-500 group-hover:text-elegant-black group-hover:translate-x-2">
+                    →
+                  </span>
+                </div>
+              </div>
+
             </${hasCaseStudy ? 'a' : 'div'}>
           `;
         }).join('');
+      } else {
+        grid.innerHTML = `
+          <div class="col-span-full border-b border-r border-off-white/20 p-12 text-center">
+            <p class="text-2xl font-main font-bold uppercase text-off-white/40">No records found.</p>
+          </div>
+        `;
       }
     } catch (error) {
       console.error("Error fetching portfolio data:", error);
-      grid.innerHTML = `<p class="text-white/40 p-10">Unable to load portfolio at this time.</p>`;
+      grid.innerHTML = `
+        <div class="col-span-full border-b border-r border-off-white/20 p-12 text-center bg-red-900/20">
+          <p class="text-xl font-bold uppercase tracking-widest text-off-white">System Error: Unable to retrieve archive.</p>
+        </div>
+      `;
     }
   };
 
-  // Run on initial load and during client-side navigation
+  // Lifecycle execution
   let workPortfolioLoaded = false;
   const startWorkPortfolio = () => {
     if (workPortfolioLoaded) return;
@@ -121,134 +137,21 @@ import Layout from '../layouts/Layout.astro';
 </script>
 
 <style>
-  .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: 100%;
-    gap: 0;
-    grid-auto-rows: minmax(520px, auto);
+  /* Hides scrollbar to maintain the strict geometric aesthetic 
+    while preserving scrolling functionality. 
+  */
+  ::-webkit-scrollbar {
+    width: 8px;
   }
-
-  .gallery-item {
-    position: relative;
-    overflow: hidden;
-    text-decoration: none;
-    cursor: default;
-    min-height: 520px;
+  ::-webkit-scrollbar-track {
+    background: #042425; /* Fallback based on your primary green/black */
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
   }
-
-  a.gallery-item {
-    cursor: pointer;
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2); 
+    border-radius: 0px;
   }
-
-  .image-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    display: flex;
-    align-items: stretch;
-    justify-content: stretch;
-  }
-
-  .image-fallback {
-    width: 100%;
-    height: 100%;
-    background: rgba(255,255,255,0.04);
-  }
-
-  .gallery-image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .gallery-item:hover .gallery-image {
-    transform: scale(1.08);
-  }
-
-  .overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(4, 36, 37, 0.96) 0%,
-      rgba(4, 36, 37, 0.35) 40%,
-      transparent 100%
-    );
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
-
-  .gallery-item:hover .overlay {
-    opacity: 1;
-  }
-
-  .overlay-content {
-    transform: translateY(20px);
-    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .gallery-item:hover .overlay-content {
-    transform: translateY(0);
-  }
-
-  .overlay-content p,
-  .case-study-link {
-    opacity: 0;
-    transition: opacity 0.4s ease 0.15s;
-  }
-
-  .gallery-item:hover .overlay-content p,
-  .gallery-item:hover .case-study-link {
-    opacity: 1;
-  }
-
-  .card-tag {
-    z-index: 2;
-  }
-
-  @media (max-width: 768px) {
-    .overlay {
-      opacity: 1;
-      background: linear-gradient(
-        to top,
-        rgba(4, 36, 37, 0.92) 0%,
-        rgba(4, 36, 37, 0.45) 30%,
-        transparent 100%
-      );
-    }
-
-    .overlay-content p,
-    .case-study-link {
-      opacity: 1;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    .gallery-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-auto-rows: minmax(420px, auto);
-    }
-  }
-
-  @media (max-width: 768px) {
-    .gallery-grid {
-      grid-template-columns: 1fr;
-      grid-auto-rows: minmax(360px, auto);
-    }
-
-    .gallery-item {
-      min-height: 360px;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .image-container {
-      aspect-ratio: 4 / 5;
-    }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #f5bd02; 
   }
 </style>
