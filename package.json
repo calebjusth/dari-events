@@ -1,9 +1,9 @@
 {
-  "name": "abetu",
+  "name": "dari",
   "type": "module",
   "version": "0.0.1",
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "astro dev",
