@@ -1,7 +1,7 @@
-import { c as createComponent } from './astro-component_OeEvRREN.mjs';
+import { c as createComponent } from './astro-component_C0wE0kuq.mjs';
 import 'piccolore';
-import { n as renderComponent, r as renderTemplate, m as maybeRenderHead } from './entrypoint_B2WFXLJS.mjs';
-import { $ as $$Layout, r as renderScript } from './Layout_Bkfq0zuA.mjs';
+import { n as renderComponent, r as renderTemplate, m as maybeRenderHead } from './entrypoint_BzTfj7US.mjs';
+import { $ as $$Layout, r as renderScript } from './Layout_Dz5mJC4E.mjs';
 
 const $$Events = createComponent(async ($$result, $$props, $$slots) => {
   const pageTitle = "Upcoming Events | Dari Events - Cinematic Experiences in Addis Ababa";

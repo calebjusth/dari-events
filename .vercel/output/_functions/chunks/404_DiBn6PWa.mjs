@@ -1,7 +1,7 @@
-import { c as createComponent } from './astro-component_OeEvRREN.mjs';
+import { c as createComponent } from './astro-component_C0wE0kuq.mjs';
 import 'piccolore';
-import { n as renderComponent, r as renderTemplate, m as maybeRenderHead } from './entrypoint_B2WFXLJS.mjs';
-import { $ as $$Layout } from './Layout_Bkfq0zuA.mjs';
+import { n as renderComponent, r as renderTemplate, m as maybeRenderHead } from './entrypoint_BzTfj7US.mjs';
+import { $ as $$Layout } from './Layout_Dz5mJC4E.mjs';
 
 const $$404 = createComponent(($$result, $$props, $$slots) => {
   const pageTitle = "404 - Event Not Found | Dari Events";
