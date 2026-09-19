@@ -1,6 +1,6 @@
 const BASE_URL = "https://darievents.com";
 const PAYLOAD_URL = "https://cms.darievents.com";
-const pageModules = /* #__PURE__ */ Object.assign({"./404.astro": () => import('./404_SMzmTJr7.mjs').then(n => n._),"./aboutus.astro": () => import('./aboutus_iERrOYR0.mjs').then(n => n._),"./events.astro": () => import('./events_BPUwkEFB.mjs').then(n => n._),"./events/[id].astro": () => import('./_id__CZ92AgW2.mjs').then(n => n._),"./index.astro": () => import('./index_BH-pUdDV.mjs').then(n => n._),"./portfolio/[slug].astro": () => import('./_slug__D4EqF7zE.mjs').then(n => n._),"./verify.astro": () => import('./verify_u5AqCIQH.mjs').then(n => n._),"./work.astro": () => import('./work_d4skZ5Lu.mjs').then(n => n._)});
+const pageModules = /* #__PURE__ */ Object.assign({"./404.astro": () => import('./404_DDpDKBI_.mjs').then(n => n._),"./aboutus.astro": () => import('./aboutus_C6guyq9z.mjs').then(n => n._),"./events.astro": () => import('./events_BPI-NXGh.mjs').then(n => n._),"./events/[id].astro": () => import('./_id__CHtGKdSP.mjs').then(n => n._),"./index.astro": () => import('./index_3n6AGav4.mjs').then(n => n._),"./portfolio/[slug].astro": () => import('./_slug__ByLqkbTe.mjs').then(n => n._),"./verify.astro": () => import('./verify_B7HS19iu.mjs').then(n => n._),"./work.astro": () => import('./work_BHCPE_yJ.mjs').then(n => n._)});
 const normalizeRouteFromFile = (filePath) => {
   const route = filePath.replace(/^\.\//, "").replace(/\.(astro|md|mdx)$/, "");
   if (route.endsWith("/index")) {
