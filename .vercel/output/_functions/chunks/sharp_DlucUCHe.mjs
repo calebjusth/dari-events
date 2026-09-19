@@ -1,5 +1,5 @@
-import { A as AstroError, l as MissingSharp } from './entrypoint_BWmtsAv-.mjs';
-import { b as baseService, p as parseQuality } from './generic_CJw_3c7s.mjs';
+import { A as AstroError, l as MissingSharp } from './entrypoint_B2WFXLJS.mjs';
+import { b as baseService, p as parseQuality } from './generic_DgNJ3x60.mjs';
 
 let sharp;
 const qualityTable = {

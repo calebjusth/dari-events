@@ -1,7 +1,7 @@
-import { c as createComponent } from './astro-component_B1C92Or_.mjs';
+import { c as createComponent } from './astro-component_OeEvRREN.mjs';
 import 'piccolore';
-import { n as renderComponent, r as renderTemplate, m as maybeRenderHead } from './entrypoint_BWmtsAv-.mjs';
-import { $ as $$Layout, r as renderScript } from './Layout_BtGRhFTM.mjs';
+import { n as renderComponent, r as renderTemplate, m as maybeRenderHead } from './entrypoint_B2WFXLJS.mjs';
+import { $ as $$Layout, r as renderScript } from './Layout_Bkfq0zuA.mjs';
 
 const $$Work = createComponent(async ($$result, $$props, $$slots) => {
   return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Archive | Dari Events", "description": "A curated selection of cinematic experiences and strategic event productions.", "data-astro-cid-jljc7dey": true }, { "default": async ($$result2) => renderTemplate` ${maybeRenderHead()}<main class="min-h-screen bg-elegant-black text-off-white selection:bg-gold selection:text-elegant-black overflow-x-hidden" data-astro-cid-jljc7dey> <header class="w-full pt-40 md:pt-56 pb-16 px-4 md:px-8 border-b border-off-white/20" data-astro-cid-jljc7dey> <div class="flex flex-col md:flex-row md:items-end justify-between gap-12 w-full" data-astro-cid-jljc7dey> <div class="flex-1" data-astro-cid-jljc7dey> <p class="text-gold uppercase tracking-[0.4em] text-[10px] font-bold mb-6" data-astro-cid-jljc7dey>Archive / Index</p> <h1 class="text-6xl md:text-[10vw] font-main font-bold uppercase leading-[0.85] tracking-tighter text-off-white break-words" data-astro-cid-jljc7dey>
