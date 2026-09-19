@@ -6,12 +6,10 @@
     "node": "18.x"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "vercel-build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
-  },
+  "dev": "astro dev",
+  "build": "astro build",
+  "preview": "astro preview"
+}
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",
     "@astrojs/vercel": "^10.0.0",
