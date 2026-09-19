@@ -44,6 +44,12 @@ import { onCleanup } from 'solid-js';
       const video = document.getElementById('video');
       const resultEl = document.getElementById('result');
       const scanNextBtn = document.getElementById('scanNext');
+      const diagEl = document.createElement('div');
+      diagEl.id = 'diag';
+      diagEl.style.marginTop = '8px';
+      diagEl.style.fontSize = '12px';
+      diagEl.style.color = '#888';
+      document.querySelector('.status').appendChild(diagEl);
 
       let scanning = false;
       let lastToken = null;
@@ -91,9 +97,45 @@ import { onCleanup } from 'solid-js';
         await startCamera();
       })();
 
+        async function ensureCameraPermission() {
+          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error('MediaDevices API not supported');
+          }
+
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } });
+            stream.getTracks().forEach(t => t.stop());
+
+            try {
+              const devices = await navigator.mediaDevices.enumerateDevices();
+              const cams = devices.filter(d => d.kind === 'videoinput').map(d => d.label || d.deviceId);
+              diagEl.textContent = `Cameras: ${cams.join(', ')}`;
+              console.debug('cameras', cams);
+            } catch (e) {
+              console.debug('enumerateDevices failed', e);
+              diagEl.textContent = 'Cameras: (permission required to list devices)';
+            }
+
+            return true;
+          } catch (err) {
+            console.warn('camera permission denied or error', err);
+            throw err;
+          }
+        }
+
         async function startCamera() {
           if (!scanner) return;
           scanNextBtn.disabled = true;
+          try {
+            await ensureCameraPermission();
+          } catch (err) {
+            const msg = (err && err.name) ? `${err.name}: ${err.message}` : 'Camera access is required. Please enable camera permissions.';
+            resultEl.innerHTML = `<div class="error">${msg}</div>`;
+            scanNextBtn.style.display = 'block';
+            scanNextBtn.disabled = false;
+            return;
+          }
+
           try {
             await scanner.start();
             scanning = true;
@@ -101,8 +143,10 @@ import { onCleanup } from 'solid-js';
             resultEl.textContent = '';
             scanNextBtn.style.display = 'none';
           } catch (err) {
-            const msg = (err && err.name) ? `${err.name}: ${err.message}` : 'Camera access is required. Please enable camera permissions.';
+            console.error('scanner.start error', err);
+            const msg = (err && err.name) ? `${err.name}: ${err.message}` : 'Unable to start camera.';
             resultEl.innerHTML = `<div class="error">${msg}</div>`;
+            scanNextBtn.style.display = 'block';
             scanNextBtn.disabled = false;
           }
         }
