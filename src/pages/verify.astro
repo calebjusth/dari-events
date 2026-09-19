@@ -84,32 +84,39 @@ import { onCleanup } from 'solid-js';
           }
 
           scanNextBtn.style.display = 'block';
+          scanNextBtn.disabled = false;
         });
 
         // Start camera when scanner is ready
         await startCamera();
       })();
 
-      async function startCamera() {
-        if (!scanner) return;
-        try {
-          await scanner.start();
-          scanning = true;
-          lastToken = null;
-          resultEl.textContent = '';
-          scanNextBtn.style.display = 'none';
-        } catch (err) {
-          resultEl.innerHTML = '<div class="error">Camera access is required. Please enable camera permissions.</div>';
+        async function startCamera() {
+          if (!scanner) return;
+          scanNextBtn.disabled = true;
+          try {
+            await scanner.start();
+            scanning = true;
+            lastToken = null;
+            resultEl.textContent = '';
+            scanNextBtn.style.display = 'none';
+          } catch (err) {
+            const msg = (err && err.name) ? `${err.name}: ${err.message}` : 'Camera access is required. Please enable camera permissions.';
+            resultEl.innerHTML = `<div class="error">${msg}</div>`;
+            scanNextBtn.disabled = false;
+          }
         }
-      }
 
-      scanNextBtn.addEventListener('click', async () => {
-        await startCamera();
-      });
+        scanNextBtn.addEventListener('click', async () => {
+          scanNextBtn.disabled = true;
+          await startCamera();
+        });
 
       // Clean up on page unload
       window.addEventListener('beforeunload', () => {
-        if (scanner) scanner.stop();
+        if (!scanner) return;
+        try { scanner.stop(); } catch {}
+        try { scanner.destroy && scanner.destroy(); } catch {}
       });
     </script>
   </body>
