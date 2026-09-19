@@ -41,6 +41,25 @@ All commands are run from the root of the project, from a terminal:
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
 
+## Database & Verification API
+
+1. Add a PostgreSQL connection string in `DATABASE_URL` environment variable.
+2. Create the `invitations` table: `psql $DATABASE_URL -f scripts/db/create_table.sql`.
+3. Seed tokens (locally or in a staging DB):
+
+```bash
+DATABASE_URL="postgres://user:pass@host:5432/db" SEED_COUNT=600 node ./scripts/db/seed_tokens.js
+```
+
+4. Verification API endpoint: `POST /api/verify` — expect JSON `{ "token": "..." }`.
+
+Responses:
+- Valid: `{ "valid": true, "message": "VALID QR CODE", "source": "...", "expiresAt": "..." }`
+- Invalid: `{ "valid": false, "message": "NO QR CODE FOUND" }`
+
+Environment variables:
+- `DATABASE_URL` — required for DB access.
+
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).

@@ -1,0 +1,23 @@
+import { c as createComponent } from './astro-component_Cg8QvRv7.mjs';
+import 'piccolore';
+import { n as renderComponent, r as renderTemplate, m as maybeRenderHead } from './entrypoint_CvkTXUjl.mjs';
+import { $ as $$Layout, r as renderScript } from './Layout_DVSqM3uZ.mjs';
+
+const $$slug = createComponent(async ($$result, $$props, $$slots) => {
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Case Study | Dari Events", "description": "Explore our latest event design and execution case study.", "data-astro-cid-xnl3yi4e": true }, { "default": async ($$result2) => renderTemplate` ${maybeRenderHead()}<main class="text-off-white bg-elegant-black min-h-screen selection:bg-gold selection:text-elegant-black" data-astro-cid-xnl3yi4e> <div id="content-shell" class="opacity-0 transition-opacity duration-1000 ease-out" data-astro-cid-xnl3yi4e> <header class="relative w-full pt-32 md:pt-48 pb-12 border-b border-off-white/20" data-astro-cid-xnl3yi4e> <div class="w-full px-4 md:px-8" data-astro-cid-xnl3yi4e> <h1 id="project-title" class="text-6xl md:text-[12vw] font-bold font-main uppercase leading-[0.85] tracking-tighter mb-12 break-words" data-astro-cid-xnl3yi4e></h1> <div class="grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-off-white/20" data-astro-cid-xnl3yi4e> <div class="p-4 md:p-8 border-r border-b md:border-b-0 border-off-white/20" data-astro-cid-xnl3yi4e> <p class="text-gold uppercase tracking-[0.2em] text-[10px] mb-2 font-bold" data-astro-cid-xnl3yi4e>Client</p> <p id="project-client" class="text-off-white font-medium text-lg uppercase md:text-xl" data-astro-cid-xnl3yi4e></p> </div> <div class="p-4 md:p-8 border-b md:border-b-0 md:border-r border-off-white/20" data-astro-cid-xnl3yi4e> <p class="text-gold uppercase tracking-[0.2em] text-[10px] mb-2 font-bold" data-astro-cid-xnl3yi4e>Date</p> <p id="project-date" class="text-off-white font-medium text-lg uppercase md:text-xl" data-astro-cid-xnl3yi4e></p> </div> <div id="project-stats-container" class="col-span-2 md:col-span-2 grid grid-cols-2 w-full hidden" data-astro-cid-xnl3yi4e></div> </div> </div> </header> <section class="w-full h-[70vh] md:h-screen relative overflow-hidden border-b border-off-white/20" data-astro-cid-xnl3yi4e> <div id="featured-image-container" class="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat bg-fixed transition-transform duration-1000 scale-105" data-astro-cid-xnl3yi4e></div> </section> <article id="project-layout" class="w-full pb-24" data-astro-cid-xnl3yi4e></article> <section id="related-section" class="w-full border-t border-off-white/20 hidden" data-astro-cid-xnl3yi4e> <div class="w-full px-4 md:px-8 py-12 flex flex-col md:flex-row justify-between items-end border-b border-off-white/20 gap-6" data-astro-cid-xnl3yi4e> <div data-astro-cid-xnl3yi4e> <p class="text-gold uppercase tracking-[0.3em] text-[10px] mb-2 font-bold" data-astro-cid-xnl3yi4e>Archive</p> <h2 class="text-5xl md:text-7xl font-main font-bold uppercase tracking-tighter" data-astro-cid-xnl3yi4e>Related Work</h2> </div> <a href="/portfolio" class="text-off-white hover:text-gold transition-colors uppercase tracking-[0.2em] text-xs font-bold flex items-center gap-2" data-astro-cid-xnl3yi4e>
+View All Index <span class="text-lg leading-none" data-astro-cid-xnl3yi4e>→</span> </a> </div> <div id="related-grid" class="w-full grid grid-cols-1 md:grid-cols-3 gap-0" data-astro-cid-xnl3yi4e></div> </section> <div class="w-full py-32 border-t border-off-white/20 text-center px-4 md:px-8 bg-gold text-white" data-astro-cid-xnl3yi4e> <p class="uppercase tracking-[0.3em] text-[10px] mb-4 font-bold" data-astro-cid-xnl3yi4e>The Next Chapter</p> <h2 class="text-6xl md:text-[8vw] font-main font-bold uppercase leading-none tracking-tighter mb-12" data-astro-cid-xnl3yi4e>Create<br data-astro-cid-xnl3yi4e>Yours</h2> <a href="tel:+251921605961" class="inline-block border-2 border-white text-white px-16 py-6 font-bold uppercase tracking-widest hover:bg-elegant-black hover:text-gold transition-colors duration-300" data-astro-cid-xnl3yi4e>
+Call Us Now
+</a> </div> </div> </main> ` })} ${renderScript($$result, "C:/Users/MOAZE TECH/Desktop/work/websites/dari-events/src/pages/portfolio/[slug].astro?astro&type=script&index=0&lang.ts")}`;
+}, "C:/Users/MOAZE TECH/Desktop/work/websites/dari-events/src/pages/portfolio/[slug].astro", void 0);
+
+const $$file = "C:/Users/MOAZE TECH/Desktop/work/websites/dari-events/src/pages/portfolio/[slug].astro";
+const $$url = "/portfolio/[slug]";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$slug,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+export { _page as _ };

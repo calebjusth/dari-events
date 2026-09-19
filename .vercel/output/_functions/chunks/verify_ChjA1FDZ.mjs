@@ -1,0 +1,48 @@
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+});
+const POST = async ({ request }) => {
+  try {
+    const body = await request.json();
+    const token = body?.token;
+    if (!token || typeof token !== "string") {
+      return new Response(JSON.stringify({ valid: false, message: "Missing token" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+    const client = await pool.connect();
+    try {
+      const res = await client.query("SELECT token, source, expires_at FROM invitations WHERE token = $1 LIMIT 1", [token]);
+      if (res.rowCount === 0) {
+        return new Response(JSON.stringify({ valid: false, message: "NO QR CODE FOUND" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+      const row = res.rows[0];
+      return new Response(
+        JSON.stringify({ valid: true, message: "VALID QR CODE", source: row.source ?? null, expiresAt: row.expires_at ?? null }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    return new Response(JSON.stringify({ valid: false, message: "Server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+};
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  POST
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };
