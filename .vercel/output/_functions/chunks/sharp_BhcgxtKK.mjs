@@ -1,5 +1,5 @@
-import { A as AstroError, l as MissingSharp } from './entrypoint_BzTfj7US.mjs';
-import { b as baseService, p as parseQuality } from './generic_BMJrfvlt.mjs';
+import { A as AstroError, N as NoImageMetadata, U as UnsupportedImageFormat, o as MissingSharp } from './entrypoint_Cp0lWwfi.mjs';
+import { b as baseService, d as detector, r as resolveDefaultOutputFormat, p as parseQuality } from './generic_wOCk5mKD.mjs';
 
 let sharp;
 const qualityTable = {
@@ -18,6 +18,9 @@ function resolveSharpQuality(quality) {
 }
 function resolveSharpEncoderOptions(transform, inputFormat, serviceConfig = {}) {
   const quality = resolveSharpQuality(transform.quality);
+  if (transform.format === void 0) {
+    return quality === void 0 ? void 0 : { quality };
+  }
   switch (transform.format) {
     case "jpg":
     case "jpeg":
@@ -79,14 +82,35 @@ const sharpService = {
     if (!sharp) sharp = await loadSharp();
     const transform = transformOptions;
     const kernel = config.service.config.kernel;
-    if (transform.format === "svg") return { data: inputBuffer, format: "svg" };
+    const bufferFormat = detector(inputBuffer);
+    const outputFormat = transform.format ?? resolveDefaultOutputFormat(bufferFormat);
+    if (outputFormat === "svg") {
+      if (bufferFormat && bufferFormat !== "svg") {
+        console.warn(
+          `\u26A0\uFE0F  Astro expected an SVG for "${transform.src}" but the source is ${bufferFormat}. Passing it through as ${bufferFormat} instead.`
+        );
+        return { data: inputBuffer, format: bufferFormat };
+      }
+      return { data: inputBuffer, format: "svg" };
+    }
+    if (!bufferFormat) {
+      throw new AstroError({
+        ...NoImageMetadata,
+        message: NoImageMetadata.message(transform.src)
+      });
+    }
+    if (bufferFormat === "svg" && !config.dangerouslyProcessSVG) {
+      throw new AstroError({
+        ...UnsupportedImageFormat,
+        message: `SVG image processing is disabled, but the source for "${transform.src}" is an SVG. Pass it through unchanged by setting \`format="svg"\` on the component, or set \`image.dangerouslyProcessSVG: true\` to rasterize SVG sources.`
+      });
+    }
     const result = sharp(inputBuffer, {
       failOnError: false,
       pages: -1,
       limitInputPixels: config.service.config.limitInputPixels
     });
     result.rotate();
-    const { format } = await result.metadata();
     if (transform.width && transform.height) {
       const fit = transform.fit ? fitMap[transform.fit] ?? "inside" : void 0;
       result.resize({
@@ -113,23 +137,32 @@ const sharpService = {
     if (transform.background) {
       result.flatten({ background: transform.background });
     }
-    if (transform.format) {
-      const encoderOptions = resolveSharpEncoderOptions(transform, format, config.service.config);
-      if (transform.format === "webp" && format === "gif") {
-        result.webp(encoderOptions);
-      } else if (transform.format === "webp") {
-        result.webp(encoderOptions);
-      } else if (transform.format === "png") {
-        result.png(encoderOptions);
-      } else if (transform.format === "avif") {
-        result.avif(encoderOptions);
-      } else if (transform.format === "jpeg" || transform.format === "jpg") {
-        result.jpeg(encoderOptions);
-      } else {
-        result.toFormat(transform.format, encoderOptions);
-      }
+    const encoderOptions = resolveSharpEncoderOptions(
+      { format: outputFormat, quality: transform.quality },
+      bufferFormat,
+      config.service.config
+    );
+    if (outputFormat === "webp") {
+      result.webp(encoderOptions);
+    } else if (outputFormat === "png") {
+      result.png(encoderOptions);
+    } else if (outputFormat === "avif") {
+      result.avif(encoderOptions);
+    } else if (outputFormat === "jpeg" || outputFormat === "jpg") {
+      result.jpeg(encoderOptions);
+    } else {
+      result.toFormat(outputFormat, encoderOptions);
     }
-    const { data, info } = await result.toBuffer({ resolveWithObject: true });
+    let data;
+    let info;
+    try {
+      ({ data, info } = await result.toBuffer({ resolveWithObject: true }));
+    } catch {
+      console.warn(
+        `\u26A0\uFE0F  Astro could not optimize image "${transform.src}". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.`
+      );
+      return { data: inputBuffer, format: bufferFormat };
+    }
     const needsCopy = "buffer" in data && data.buffer instanceof SharedArrayBuffer;
     return {
       data: needsCopy ? new Uint8Array(data) : data,
