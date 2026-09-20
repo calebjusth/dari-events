@@ -1,574 +1,144 @@
 ---
-/**
- * QR Code Verification Scanner Page
- * 
- * Event staff use this page to scan invitation QR codes and verify attendees.
- * The scanner initializes completely on the client side with proper browser-only APIs.
- */
+const title = 'QR Verification';
 ---
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>QR Verification - Dari Events</title>
-    <meta name="description" content="Event staff QR code verification scanner" />
-    <meta name="robots" content="noindex, nofollow" />
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      html, body {
-        width: 100%;
-        height: 100%;
-        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        background: #000;
-        color: #fff;
-        overflow: hidden;
-      }
-
-      body {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .container {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        max-width: 100%;
-        position: relative;
-      }
-
-      .header {
-        padding: 12px 16px 8px;
-        text-align: center;
-        background: rgba(0, 0, 0, 0.7);
-        flex-shrink: 0;
-        z-index: 10;
-      }
-
-      .header h1 {
-        font-size: 18px;
-        font-weight: bold;
-        letter-spacing: 0.05em;
-        margin-bottom: 2px;
-      }
-
-      .header p {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.7);
-      }
-
-      .scanner-area {
-        flex: 1;
-        position: relative;
-        background: #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        min-height: 300px;
-      }
-
-      video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      .scanner-frame {
-        position: absolute;
-        width: 70%;
-        aspect-ratio: 1;
-        border: 4px solid rgba(255, 255, 255, 0.8);
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.05);
-        pointer-events: none;
-        z-index: 5;
-        box-shadow: 
-          0 0 0 2px rgba(255, 255, 255, 0.2),
-          inset 0 0 20px rgba(255, 255, 255, 0.1);
-      }
-
-      .scanner-frame::before,
-      .scanner-frame::after {
-        content: '';
-        position: absolute;
-        background: rgba(255, 255, 255, 0.8);
-      }
-
-      .scanner-frame::before {
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        height: 20px;
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), transparent);
-      }
-
-      .scanner-frame::after {
-        bottom: -2px;
-        left: -2px;
-        right: -2px;
-        height: 20px;
-        background: linear-gradient(-135deg, rgba(255, 255, 255, 0.9), transparent);
-      }
-
-      .error-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 20;
-      }
-
-      .error-message {
-        text-align: center;
-        padding: 24px;
-        color: #fff;
-        font-size: 16px;
-        line-height: 1.6;
-      }
-
-      .status-area {
-        padding: 12px 16px;
-        text-align: center;
-        background: rgba(0, 0, 0, 0.8);
-        flex-shrink: 0;
-        z-index: 10;
-        min-height: 80px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .status-content {
-        width: 100%;
-      }
-
-      .result-text {
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 8px;
-        letter-spacing: 0.05em;
-      }
-
-      .result-success {
-        color: #4ade80;
-      }
-
-      .result-error {
-        color: #ef4444;
-      }
-
-      .result-info {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.6);
-        margin-top: 4px;
-        line-height: 1.4;
-      }
-
-      .button-group {
-        display: flex;
-        gap: 8px;
-        width: 100%;
-        margin-top: 8px;
-      }
-
-      .btn {
-        flex: 1;
-        padding: 14px 16px;
-        font-size: 16px;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-transform: uppercase;
-        user-select: none;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-      }
-
-      .btn-primary {
-        background: #4ade80;
-        color: #000;
-      }
-
-      .btn-primary:active:not(:disabled) {
-        transform: scale(0.98);
-        background: #22c55e;
-      }
-
-      .btn-primary:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      .btn.hidden {
-        display: none;
-      }
-
-      .loading-spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-      }
-
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-
-      @media (max-height: 500px) {
-        .header {
-          padding: 8px 12px 4px;
-        }
-
-        .header h1 {
-          font-size: 16px;
-        }
-
-        .header p {
-          font-size: 11px;
-        }
-
-        .status-area {
-          min-height: 70px;
-          padding: 8px 12px;
-        }
-
-        .result-text {
-          font-size: 16px;
-        }
-
-        .btn {
-          padding: 12px 14px;
-          font-size: 14px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <h1>QR VERIFICATION</h1>
-        <p>Point camera at invitation QR code</p>
-      </div>
-
-      <div class="scanner-area" id="scanner-area">
-        <video id="video" autoplay playsinline muted></video>
-        <div class="scanner-frame"></div>
-        <div class="error-overlay hidden" id="error-overlay">
-          <div class="error-message" id="error-message"></div>
-        </div>
-      </div>
-
-      <div class="status-area">
-        <div class="status-content">
-          <div id="result" class="result-text hidden"></div>
-          <div id="result-info" class="result-info hidden"></div>
-          <div class="button-group" id="button-group" style="display: none;">
-            <button id="scan-next" class="btn btn-primary">SCAN NEXT</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script type="module">
-      // QR Scanner initialization - browser-only, client-side execution
-      
-      import QrScanner from 'qr-scanner';
-      // Critical: Import worker path correctly for Vite/Astro builds
-      import workerUrl from 'qr-scanner/qr-scanner-worker.min.js?url';
-
-      // Set worker path before creating scanner
-      QrScanner.WORKER_PATH = workerUrl;
-
-      // State management
-      let scanner = null;
-      let scanning = false;
-      let lastScannedToken = null;
-
-      // DOM elements
-      const videoEl = document.getElementById('video');
-      const scannerAreaEl = document.getElementById('scanner-area');
-      const resultEl = document.getElementById('result');
-      const resultInfoEl = document.getElementById('result-info');
-      const buttonGroupEl = document.getElementById('button-group');
-      const scanNextBtn = document.getElementById('scan-next');
-      const errorOverlayEl = document.getElementById('error-overlay');
-      const errorMessageEl = document.getElementById('error-message');
-
-      /**
-       * Extract token from QR content
-       * Supports both raw tokens and URL formats like /v/token
-       */
-      function extractToken(scannedContent) {
-        let token = (scannedContent || '').trim();
-        if (!token) return null;
-
-        try {
-          // Try parsing as URL
-          const url = new URL(token);
-          const parts = url.pathname.split('/').filter(Boolean);
-          
-          // Look for /v/token pattern
-          const vIndex = parts.indexOf('v');
-          if (vIndex >= 0 && parts[vIndex + 1]) {
-            token = parts[vIndex + 1];
-          } else {
-            // Fallback to last path segment
-            token = parts[parts.length - 1] || token;
-          }
-        } catch (e) {
-          // Not a URL, use as-is
-        }
-
-        return token || null;
-      }
-
-      /**
-       * Show error state with clear message
-       */
-      function showError(title, message = '') {
-        scanning = false;
-        if (scanner) {
-          try { scanner.stop(); } catch {}
-        }
-        
-        errorMessageEl.innerHTML = `<div>${title}</div>${message ? `<div style="margin-top: 8px; font-size: 14px;">${message}</div>` : ''}`;
-        errorOverlayEl.classList.remove('hidden');
-        
-        resultEl.textContent = '';
-        resultInfoEl.textContent = '';
-        resultInfoEl.classList.add('hidden');
-        resultEl.classList.add('hidden');
-        buttonGroupEl.style.display = 'flex';
-      }
-
-      /**
-       * Hide error overlay
-       */
-      function hideError() {
-        errorOverlayEl.classList.add('hidden');
-        errorMessageEl.innerHTML = '';
-      }
-
-      /**
-       * Handle QR code detection
-       */
-      async function onQrDetected(decodedText) {
-        if (!scanning) return;
-
-        const token = extractToken(decodedText);
-        
-        // Ignore duplicates or empty tokens
-        if (!token || token === lastScannedToken) return;
-
-        lastScannedToken = token;
-        scanning = false;
-        
-        // Stop scanner while verifying
-        if (scanner) {
-          try { await scanner.stop(); } catch {}
-        }
-
-        // Show loading state
-        resultEl.textContent = 'Verifying...';
-        resultEl.classList.remove('hidden', 'result-error');
-        resultEl.classList.add('result-success');
-        resultInfoEl.classList.add('hidden');
-        buttonGroupEl.style.display = 'none';
-        hideError();
-
-        try {
-          const response = await fetch('/api/verify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token })
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
-
-          const data = await response.json();
-
-          if (data.valid) {
-            // Success
-            resultEl.textContent = '✓ VALID QR CODE';
-            resultEl.classList.remove('result-error');
-            resultEl.classList.add('result-success');
-            
-            let infoText = '';
-            if (data.source) infoText += `Source: ${data.source}`;
-            if (data.expiresAt) {
-              if (infoText) infoText += ' • ';
-              infoText += `Expires: ${data.expiresAt}`;
-            }
-            
-            if (infoText) {
-              resultInfoEl.textContent = infoText;
-              resultInfoEl.classList.remove('hidden');
-            }
-          } else {
-            // Invalid token
-            resultEl.textContent = '✕ NO QR CODE FOUND';
-            resultEl.classList.remove('result-success');
-            resultEl.classList.add('result-error');
-            resultInfoEl.classList.add('hidden');
-          }
-        } catch (err) {
-          resultEl.textContent = '✕ VERIFICATION FAILED';
-          resultEl.classList.remove('result-success');
-          resultEl.classList.add('result-error');
-          resultInfoEl.textContent = 'Unable to verify. Try again.';
-          resultInfoEl.classList.remove('hidden');
-          console.error('Verification error:', err);
-        }
-
-        buttonGroupEl.style.display = 'flex';
-        scanNextBtn.disabled = false;
-      }
-
-      /**
-       * Start or resume scanning
-       */
-      async function startScanning() {
-        if (!scanner) {
-          showError(
-            'Scanner Not Ready',
-            'The QR scanner is not initialized. Please reload the page.'
-          );
-          return;
-        }
-
-        scanNextBtn.disabled = true;
-
-        // First, ensure camera permission
-        try {
-          if (!navigator.mediaDevices?.getUserMedia) {
-            throw new Error('MediaDevices API not supported. Camera access not available.');
-          }
-
-          // Request permission
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: { ideal: 'environment' } }
-          });
-
-          // Stop the test stream immediately
-          stream.getTracks().forEach(track => track.stop());
-        } catch (err) {
-          const errorMsg = err?.name === 'NotAllowedError'
-            ? 'Camera permission denied. Please enable camera access in settings.'
-            : err?.name === 'NotFoundError'
-            ? 'No camera found. Please check your device.'
-            : 'Camera access failed. Please try again.';
-
-          showError('CAMERA ACCESS REQUIRED', errorMsg);
-          return;
-        }
-
-        // Start scanner
-        try {
-          await scanner.start();
-          scanning = true;
-          lastScannedToken = null;
-
-          // Clear UI
-          resultEl.textContent = '';
-          resultEl.classList.add('hidden');
-          resultInfoEl.classList.add('hidden');
-          buttonGroupEl.style.display = 'none';
-          hideError();
-        } catch (err) {
-          const errorMsg = err?.message || 'Unable to start camera scanner.';
-          showError('SCANNER ERROR', errorMsg);
-          console.error('Scanner start error:', err);
-        }
-      }
-
-      /**
-       * Initialize QR scanner
-       */
-      async function initializeScanner() {
-        try {
-          scanner = new QrScanner(
-            videoEl,
-            onQrDetected,
-            {
-              preferredCamera: 'environment',
-              returnDetailedScanResult: false,
-              maxScansPerSecond: 5,
-            }
-          );
-        } catch (err) {
-          showError(
-            'INITIALIZATION ERROR',
-            'Failed to initialize QR scanner. ' + (err?.message || '')
-          );
-          console.error('Scanner init error:', err);
-          return;
-        }
-
-        // Handle when scanner gets destroyed/stopped
-        scanner.hasCamera().then(hasCamera => {
-          if (!hasCamera) {
-            showError('NO CAMERA DETECTED', 'Your device does not have a camera.');
-          }
-        }).catch(() => {
-          // Camera check failed, but it might still work
-          console.debug('Camera check inconclusive');
-        });
-      }
-
-      /**
-       * Cleanup
-       */
-      function cleanup() {
-        if (!scanner) return;
-        try { scanner.stop(); } catch {}
-        try { scanner.destroy(); } catch {}
-      }
-
-      // Event listeners
-      scanNextBtn.addEventListener('click', startScanning);
-      window.addEventListener('beforeunload', cleanup);
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden && scanner && scanning) {
-          try { scanner.stop(); } catch {}
-          scanning = false;
-        } else if (!document.hidden && scanner && !scanning) {
-          startScanning();
-        }
-      });
-
-      // Initialize on DOM ready
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', async () => {
-          await initializeScanner();
-          await startScanning();
-        });
-      } else {
-        (async () => {
-          await initializeScanner();
-          await startScanning();
-        })();
-      }
-    </script>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+		<meta name="robots" content="noindex, nofollow" />
+		<style>
+			:global(*) { box-sizing: border-box; }
+			:global(html), :global(body) { margin: 0; min-height: 100%; }
+			:global(body) { background: #111; color: #fff; font-family: system-ui, sans-serif; }
+			main { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+			.app { width: min(100%, 520px); text-align: center; }
+			h1 { font-size: 1.25rem; margin: 0 0 16px; }
+			.camera { position: relative; width: 100%; aspect-ratio: 3 / 4; overflow: hidden; background: #000; }
+			video { display: block; width: 100%; height: 100%; object-fit: cover; }
+			.frame { position: absolute; inset: 15%; border: 3px solid #fff; pointer-events: none; }
+			#status { min-height: 48px; padding: 16px 0 8px; font-size: 1.1rem; }
+			#next { width: 100%; padding: 16px; border: 0; border-radius: 6px; background: #fff; color: #111; font-size: 1.1rem; font-weight: 700; cursor: pointer; }
+			#next[hidden] { display: none; }
+			.error { color: #ff8c8c; }
+			.valid { color: #8cffaa; }
+		</style>
+	</head>
+	<body>
+		<main>
+			<section class="app" aria-live="polite">
+				<h1>QR VERIFICATION</h1>
+				<div class="camera">
+					<video id="camera" autoplay muted playsinline></video>
+					<div class="frame" aria-hidden="true"></div>
+				</div>
+				<div id="status">Requesting camera access...</div>
+				<button id="next" type="button" hidden>SCAN NEXT</button>
+			</section>
+		</main>
+
+		<script>
+			import QrScanner from 'qr-scanner';
+			import workerUrl from 'qr-scanner/qr-scanner-worker.min.js?url';
+
+			QrScanner.WORKER_PATH = workerUrl;
+
+			const video = document.querySelector<HTMLVideoElement>('#camera');
+			const status = document.querySelector<HTMLElement>('#status');
+			const nextButton = document.querySelector<HTMLButtonElement>('#next');
+			let isScanning = false;
+
+			if (!video || !status || !nextButton) {
+				throw new Error('Scanner elements are missing from the page.');
+			}
+
+			const videoElement = video;
+			const statusElement = status;
+			const scanNextButton = nextButton;
+			let scanner: QrScanner;
+
+			function getToken(value: string): string | null {
+				const content = value.trim();
+				if (!content) return null;
+
+				try {
+					const url = new URL(content);
+					const parts = url.pathname.split('/').filter(Boolean);
+					const versionIndex = parts.indexOf('v');
+					return parts[versionIndex + 1] || parts.at(-1) || null;
+				} catch {
+					return content;
+				}
+			}
+
+			function showStatus(message: string, className = '') {
+				statusElement.textContent = message;
+				statusElement.className = className;
+			}
+
+			async function verify(decodedText: string) {
+				if (!isScanning) return;
+				isScanning = false;
+				await scanner.stop();
+				showStatus('Checking QR code...');
+
+				const token = getToken(decodedText);
+				try {
+					const response = await fetch('/api/verify', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ token }),
+					});
+					const result = await response.json();
+
+					if (response.ok && result.valid) {
+						showStatus('VALID QR CODE', 'valid');
+					} else {
+						showStatus('INVALID QR CODE', 'error');
+					}
+				} catch (error: unknown) {
+					console.error('QR verification failed', error);
+					showStatus('Could not verify QR code. Try again.', 'error');
+				}
+
+				scanNextButton.hidden = false;
+			}
+
+			async function startScanning() {
+				scanNextButton.hidden = true;
+				showStatus('Requesting camera access...');
+
+				try {
+					if (!navigator.mediaDevices?.getUserMedia) {
+						throw new Error('Camera access is not supported by this browser.');
+					}
+
+					  await scanner.start();
+					isScanning = true;
+					showStatus('Point the camera at a QR code.');
+				} catch (error: unknown) {
+					console.error('Camera start failed', error);
+					isScanning = false;
+					const errorName = error instanceof DOMException ? error.name : '';
+					const message = errorName === 'NotAllowedError'
+						? 'Camera permission is required. Allow camera access and reload this page.'
+						: errorName === 'NotFoundError'
+							? 'No camera was found on this device.'
+							: 'Unable to open the camera. Check browser permissions and try again.';
+					showStatus(message, 'error');
+					scanNextButton.hidden = false;
+				}
+			}
+
+			scanner = new QrScanner(videoElement, (decodedText: string) => {
+				verify(decodedText);
+			});
+
+			scanNextButton.addEventListener('click', startScanning);
+			window.addEventListener('pagehide', () => scanner.destroy());
+			startScanning();
+		</script>
+	</body>
 </html>
