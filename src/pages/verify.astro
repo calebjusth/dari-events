@@ -96,7 +96,7 @@ const title = 'QR Verification';
 					if (response.ok && result.valid) {
 						showStatus('VALID QR CODE', 'valid');
 					} else {
-						showStatus('INVALID QR CODE', 'error');
+						showStatus('NO QR CODE FOUND', 'error');
 					}
 				} catch (error: unknown) {
 					console.error('QR verification failed', error);

@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { Pool } from 'pg';
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL ?? import.meta.env.DATABASE_URL,
 });
 
 export const POST: APIRoute = async ({ request }) => {
