@@ -19,7 +19,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const client = await pool.connect();
     try {
-      const res = await client.query('SELECT token, source, expires_at FROM invitations WHERE token = $1 LIMIT 1', [token]);
+      const res = await client.query('SELECT token, source, expires_at, ticket_type FROM invitations WHERE token = $1 LIMIT 1', [token]);
       if (res.rowCount === 0) {
         return new Response(JSON.stringify({ valid: false, message: 'NO QR CODE FOUND' }), {
           status: 200,
@@ -29,7 +29,13 @@ export const POST: APIRoute = async ({ request }) => {
 
       const row = res.rows[0];
       return new Response(
-        JSON.stringify({ valid: true, message: 'VALID QR CODE', source: row.source ?? null, expiresAt: row.expires_at ?? null }),
+        JSON.stringify({
+          valid: true,
+          message: 'VALID QR CODE',
+          ticketType: row.ticket_type ?? null,
+          source: row.source ?? null,
+          expiresAt: row.expires_at ?? null,
+        }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
       );
     } finally {
