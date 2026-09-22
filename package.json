@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "migrate:scan-count": "node scripts/db/migrate-scan-count.js"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",

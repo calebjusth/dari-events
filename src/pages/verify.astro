@@ -21,6 +21,7 @@ const title = 'QR Verification';
 			.frame { position: absolute; inset: 15%; border: 3px solid #fff; pointer-events: none; }
 			#status { min-height: 48px; padding: 16px 0 8px; font-size: 1.1rem; }
 			#ticketType { min-height: 28px; padding: 0 0 8px; font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; }
+			#scanCount { min-height: 28px; padding: 0 0 16px; font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; }
 			#next { width: 100%; padding: 16px; border: 0; border-radius: 6px; background: #fff; color: #111; font-size: 1.1rem; font-weight: 700; cursor: pointer; }
 			#next[hidden] { display: none; }
 			.error { color: #ff8c8c; }
@@ -37,6 +38,7 @@ const title = 'QR Verification';
 				</div>
 				<div id="status">Requesting camera access...</div>
 				<div id="ticketType"></div>
+				<div id="scanCount"></div>
 				<button id="next" type="button" hidden>SCAN NEXT</button>
 			</section>
 		</main>
@@ -50,16 +52,18 @@ const title = 'QR Verification';
 			const video = document.querySelector<HTMLVideoElement>('#camera');
 			const status = document.querySelector<HTMLElement>('#status');
 			const ticketTypeEl = document.querySelector<HTMLElement>('#ticketType');
+			const scanCountEl = document.querySelector<HTMLElement>('#scanCount');
 			const nextButton = document.querySelector<HTMLButtonElement>('#next');
 			let isScanning = false;
 
-			if (!video || !status || !ticketTypeEl || !nextButton) {
+			if (!video || !status || !ticketTypeEl || !scanCountEl || !nextButton) {
 				throw new Error('Scanner elements are missing from the page.');
 			}
 
 			const videoElement = video;
 			const statusElement = status;
 			const ticketTypeElement = ticketTypeEl;
+			const scanCountElement = scanCountEl;
 			const scanNextButton = nextButton;
 			let scanner: QrScanner;
 
@@ -87,12 +91,18 @@ const title = 'QR Verification';
 				ticketTypeElement.className = className;
 			}
 
+			function showScanCount(message: string, className = '') {
+				scanCountElement.textContent = message;
+				scanCountElement.className = className;
+			}
+
 			async function verify(decodedText: string) {
 				if (!isScanning) return;
 				isScanning = false;
 				await scanner.stop();
 				showStatus('Checking QR code...');
 				showTicketType('');
+				showScanCount('');
 
 				const token = getToken(decodedText);
 				try {
@@ -112,6 +122,10 @@ const title = 'QR Verification';
 						} else {
 							showTicketType('');
 						}
+						const scanCount = Number(result.scanCount);
+						if (Number.isInteger(scanCount) && scanCount >= 0) {
+							showScanCount(`SCANNED ${scanCount} ${scanCount === 1 ? 'TIME' : 'TIMES'}`, 'valid');
+						}
 					} else {
 						showStatus('NO QR CODE FOUND', 'error');
 					}
@@ -127,6 +141,7 @@ const title = 'QR Verification';
 				scanNextButton.hidden = true;
 				showStatus('Requesting camera access...');
 				showTicketType('');
+				showScanCount('');
 
 				try {
 					if (!navigator.mediaDevices?.getUserMedia) {
